@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #F8F9FA;
+  --foreground: #1A1C1E;
+  --aws-blue: #0073BB;
+  --aws-charcoal: #232F3E;
+  
+  /* Exact Gradients from reference image */
+  --grad-hero-inf: linear-gradient(135deg, #E6F2FA 0%, #FDF4E3 100%);
+  --grad-hero-pulse: linear-gradient(135deg, #E6F2FA 0%, #E7F6EC 100%);
+  --grad-hero-log: linear-gradient(135deg, #E6F2FA 0%, #EDEEF0 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.font-jakarta {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@layer base {
+  body {
+    background: #F8F9FA;
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .glass-card {
+    background: rgb(248, 246, 246);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .continent-pill {
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition-property: all;
+    border: 1px solid #F1F5F9;
+    color: #64748B;
+    white-space: nowrap;
+  }
+
+  .continent-pill:hover {
+    border-color: #CBD5E1;
+    background-color: #F8FAFC;
+  }
+
+  .continent-pill-active {
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition-property: all;
+    border: 2px solid #BFDBFE;
+    box-shadow: 0 1px 2px 0 rgb(255, 255, 255);
+    background: linear-gradient(90deg, #A5F3FC 0%, #A5B4FC 100%);
+    color: #1A1C1E; 
+    white-space: nowrap;
+  }
+
+  .premium-sidebar {
+    background: rgba(255, 255, 255, 0.95);
+    border-right: 1px solid #F1F5F9;
+    box-shadow: 20px 0 50px -20px rgba(0, 0, 0, 0.02);
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    transition-property: all;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #64748B;
+  }
+
+  .sidebar-item:hover {
+    background-color: #F8FAFC;
+    color: #1E293B;
+  }
+
+  .sidebar-item-active {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background-color: #F8FAFC;
+    color: #0F172A;
+    border-left: 4px solid #0073BB;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .premium-scrollbar::-webkit-scrollbar {
+    width: 5px;
+  }
+  .premium-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .premium-scrollbar::-webkit-scrollbar-thumb {
+    background: #E2E8F0;
+    border-radius: 10px;
+  }
+  .premium-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #CBD5E1;
+  }
+  .premium-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #E2E8F0 transparent;
+  }
+
+  /* 3D Flip Utilities */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+}
