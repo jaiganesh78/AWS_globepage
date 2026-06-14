@@ -1,0 +1,1177 @@
+﻿[
+    {
+        "id":  "cmqe9zakz000btl418r2ks4sy",
+        "awsRegionCode":  "us-east-1",
+        "name":  "US East (N. Virginia)",
+        "regionCode":  "US",
+        "flag":  "🇺🇸",
+        "flagUrl":  "https://flagcdn.com/us.svg",
+        "displayOrder":  0,
+        "latitude":  38.8048,
+        "longitude":  -77.0469,
+        "categoryId":  "cmqe9zakk0000tl41j925gfv9",
+        "category":  {
+                         "id":  "cmqe9zakk0000tl41j925gfv9",
+                         "name":  "US North America",
+                         "slug":  "north-america",
+                         "flag":  "https://flagcdn.com/us.svg",
+                         "displayOrder":  1,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.517Z",
+                         "updatedAt":  "2026-06-14T21:07:20.517Z"
+                     },
+        "infrastructureDescription":  "One of the oldest and largest AWS regions, containing multiple massive data centers and Availability Zones.",
+        "availabilityZones":  6,
+        "launchYear":  2006,
+        "primaryLocation":  "Virginia, USA",
+        "compliance":  "FedRAMP, HIPAA, SOC, ISO",
+        "totalServices":  "250+",
+        "aimlServices":  "40+",
+        "analyticsServices":  "30+",
+        "networkingServices":  "25+",
+        "edgeLocations":  "100+",
+        "directConnect":  "Available",
+        "reach":  "Global",
+        "latency":  "Ultra-low across North America",
+        "services":  [
+                         "Compute workloads",
+                         "Advanced AI/ML services",
+                         "Enterprise database platforms",
+                         "Global content delivery (CloudFront)"
+                     ],
+        "benefits":  [
+                         "Sub-millisecond local latency",
+                         "Massive resource capacity",
+                         "First-tier service rollouts"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Model Hosting",
+                               "Bedrock Foundation Models",
+                               "GPU Accelerators (P4/P5)",
+                               "Trainium/Inferentia Clusters"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon EKS",
+                            "Amazon Aurora",
+                            "AWS Lambda"
+                        ],
+        "workloads":  [
+                          "Enterprise-scale generative AI applications",
+                          "Core financial transaction backends",
+                          "High-throughput data ingestion grids"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.532Z",
+        "updatedAt":  "2026-06-14T21:07:20.532Z"
+    },
+    {
+        "id":  "cmqe9zalu001ftl415gx0026s",
+        "awsRegionCode":  "us-west-2",
+        "name":  "US West (Oregon)",
+        "regionCode":  "US",
+        "flag":  "🇺🇸",
+        "flagUrl":  "https://flagcdn.com/us.svg",
+        "displayOrder":  10,
+        "latitude":  45.8405,
+        "longitude":  -119.7014,
+        "categoryId":  "cmqe9zakk0000tl41j925gfv9",
+        "category":  {
+                         "id":  "cmqe9zakk0000tl41j925gfv9",
+                         "name":  "US North America",
+                         "slug":  "north-america",
+                         "flag":  "https://flagcdn.com/us.svg",
+                         "displayOrder":  1,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.517Z",
+                         "updatedAt":  "2026-06-14T21:07:20.517Z"
+                     },
+        "infrastructureDescription":  "A major US West Coast hub powered largely by renewable energy, supporting massive scalable compute grids.",
+        "availabilityZones":  4,
+        "launchYear":  2011,
+        "primaryLocation":  "Oregon, USA",
+        "compliance":  "SOC, ISO, HIPAA",
+        "totalServices":  "240+",
+        "aimlServices":  "40+",
+        "analyticsServices":  "28+",
+        "networkingServices":  "24+",
+        "edgeLocations":  "90+",
+        "directConnect":  "Available",
+        "reach":  "Americas \u0026 Asia Pacific",
+        "latency":  "Optimized West Coast access",
+        "services":  [
+                         "GPU Compute Clusters",
+                         "High-performance storage",
+                         "E-commerce scale computing",
+                         "Serverless orchestration"
+                     ],
+        "benefits":  [
+                         "Eco-friendly energy grid",
+                         "Lower regional operating costs",
+                         "High availability on the West Coast"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Studio",
+                               "Bedrock APIs",
+                               "GPU Compute Instances (G5/P4)",
+                               "Inferentia Nodes"
+                           ],
+        "topServices":  [
+                            "Amazon EKS",
+                            "Amazon Aurora",
+                            "Amazon ECS",
+                            "AWS Batch"
+                        ],
+        "workloads":  [
+                          "High-performance media rendering",
+                          "Large-scale scientific simulations",
+                          "SaaS product hosting"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.562Z",
+        "updatedAt":  "2026-06-14T21:07:20.562Z"
+    },
+    {
+        "id":  "cmqe9zame002htl41igggmecm",
+        "awsRegionCode":  "ca-central-1",
+        "name":  "Canada (Central)",
+        "regionCode":  "CA",
+        "flag":  "🇨🇦",
+        "flagUrl":  "https://flagcdn.com/ca.svg",
+        "displayOrder":  20,
+        "latitude":  45.4215,
+        "longitude":  -75.6972,
+        "categoryId":  "cmqe9zakk0000tl41j925gfv9",
+        "category":  {
+                         "id":  "cmqe9zakk0000tl41j925gfv9",
+                         "name":  "US North America",
+                         "slug":  "north-america",
+                         "flag":  "https://flagcdn.com/us.svg",
+                         "displayOrder":  1,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.517Z",
+                         "updatedAt":  "2026-06-14T21:07:20.517Z"
+                     },
+        "infrastructureDescription":  "AWS central Canada region designed to meet strict local data sovereignty and security regulations.",
+        "availabilityZones":  3,
+        "launchYear":  2016,
+        "primaryLocation":  "Montreal",
+        "compliance":  "Canadian Data Residency",
+        "totalServices":  "200+",
+        "aimlServices":  "25+",
+        "analyticsServices":  "22+",
+        "networkingServices":  "20+",
+        "edgeLocations":  "15+",
+        "directConnect":  "Available",
+        "reach":  "Canada \u0026 North America",
+        "latency":  "Optimized for Canadian users",
+        "services":  [
+                         "Cloud hosting",
+                         "Secure public sector storage",
+                         "Data warehouse indexing"
+                     ],
+        "benefits":  [
+                         "Canadian compliance alignment",
+                         "Low latency for Canadian users",
+                         "Robust disaster recovery options"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Pipelines",
+                               "Amazon Rekognition",
+                               "Amazon Lex"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon RDS",
+                            "Amazon EMR"
+                        ],
+        "workloads":  [
+                          "Canadian public sector applications",
+                          "Local retail analytics engines",
+                          "Sovereign storage compliance"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.582Z",
+        "updatedAt":  "2026-06-14T21:07:20.582Z"
+    },
+    {
+        "id":  "cmqea58yj0002rfyqj6xb2pfj",
+        "awsRegionCode":  "eu-west-2",
+        "name":  "Europe (London)",
+        "regionCode":  "GB",
+        "flag":  "",
+        "flagUrl":  null,
+        "displayOrder":  0,
+        "latitude":  51.5074,
+        "longitude":  -0.1278,
+        "categoryId":  "cmqe9zakn0001tl41wc2g45nn",
+        "category":  {
+                         "id":  "cmqe9zakn0001tl41wc2g45nn",
+                         "name":  "Europe",
+                         "slug":  "europe",
+                         "flag":  "https://flagcdn.com/eu.svg",
+                         "displayOrder":  2,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.520Z",
+                         "updatedAt":  "2026-06-14T21:07:20.520Z"
+                     },
+        "infrastructureDescription":  "",
+        "availabilityZones":  3,
+        "launchYear":  2026,
+        "primaryLocation":  "",
+        "compliance":  "",
+        "totalServices":  "200+",
+        "aimlServices":  "30+",
+        "analyticsServices":  "20+",
+        "networkingServices":  "20+",
+        "edgeLocations":  "10+",
+        "directConnect":  "Available",
+        "reach":  "Global",
+        "latency":  "Low",
+        "services":  [
+                         "S3",
+                         "DynamoDB",
+                         "Lambda"
+                     ],
+        "benefits":  [
+                         "Low Latency",
+                         "Local Data Residency"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker"
+                           ],
+        "topServices":  [
+                            "EC2"
+                        ],
+        "workloads":  [
+                          "Web Application"
+                      ],
+        "createdAt":  "2026-06-14T21:11:58.363Z",
+        "updatedAt":  "2026-06-14T21:17:25.807Z"
+    },
+    {
+        "id":  "cmqe9zamu003ftl4185xveuxj",
+        "awsRegionCode":  "eu-west-1",
+        "name":  "Europe (Ireland)",
+        "regionCode":  "IE",
+        "flag":  "🇮🇪",
+        "flagUrl":  "https://flagcdn.com/ie.svg",
+        "displayOrder":  30,
+        "latitude":  53.3498,
+        "longitude":  -6.2603,
+        "categoryId":  "cmqe9zakn0001tl41wc2g45nn",
+        "category":  {
+                         "id":  "cmqe9zakn0001tl41wc2g45nn",
+                         "name":  "Europe",
+                         "slug":  "europe",
+                         "flag":  "https://flagcdn.com/eu.svg",
+                         "displayOrder":  2,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.520Z",
+                         "updatedAt":  "2026-06-14T21:07:20.520Z"
+                     },
+        "infrastructureDescription":  "AWS\u0027s primary European region, providing a huge footprint of compute, storage, and networking capacity.",
+        "availabilityZones":  3,
+        "launchYear":  2007,
+        "primaryLocation":  "Dublin",
+        "compliance":  "GDPR, ISO, SOC",
+        "totalServices":  "220+",
+        "aimlServices":  "35+",
+        "analyticsServices":  "25+",
+        "networkingServices":  "22+",
+        "edgeLocations":  "30+",
+        "directConnect":  "Available",
+        "reach":  "Europe \u0026 Global",
+        "latency":  "Ultra-low across Ireland and UK",
+        "services":  [
+                         "Core cloud computing",
+                         "E-commerce backends",
+                         "Big data pipelines",
+                         "Financial transaction hosting"
+                     ],
+        "benefits":  [
+                         "GDPR residency support",
+                         "Ultra-low latency across Ireland/UK",
+                         "High density of local direct connects"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Canvas",
+                               "Bedrock Inference",
+                               "GPU Graphics Instances",
+                               "Amazon Translate"
+                           ],
+        "topServices":  [
+                            "Amazon S3",
+                            "Amazon EC2",
+                            "Amazon EKS",
+                            "Amazon Redshift"
+                        ],
+        "workloads":  [
+                          "Pan-European SaaS platforms",
+                          "GDPR-compliant data storage",
+                          "Financial transaction ledgers"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.598Z",
+        "updatedAt":  "2026-06-14T21:07:20.598Z"
+    },
+    {
+        "id":  "cmqe9zane004htl41kxg9fi3v",
+        "awsRegionCode":  "eu-central-1",
+        "name":  "Europe (Germany)",
+        "regionCode":  "DE",
+        "flag":  "🇩🇪",
+        "flagUrl":  "https://flagcdn.com/de.svg",
+        "displayOrder":  40,
+        "latitude":  50.1109,
+        "longitude":  8.6821,
+        "categoryId":  "cmqe9zakn0001tl41wc2g45nn",
+        "category":  {
+                         "id":  "cmqe9zakn0001tl41wc2g45nn",
+                         "name":  "Europe",
+                         "slug":  "europe",
+                         "flag":  "https://flagcdn.com/eu.svg",
+                         "displayOrder":  2,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.520Z",
+                         "updatedAt":  "2026-06-14T21:07:20.520Z"
+                     },
+        "infrastructureDescription":  "Highly secure region based in Frankfurt, complying with Germany\u0027s strict federal data security regulations.",
+        "availabilityZones":  3,
+        "launchYear":  2014,
+        "primaryLocation":  "Frankfurt",
+        "compliance":  "GDPR, BSI Standards",
+        "totalServices":  "220+",
+        "aimlServices":  "35+",
+        "analyticsServices":  "25+",
+        "networkingServices":  "22+",
+        "edgeLocations":  "35+",
+        "directConnect":  "Available",
+        "reach":  "Central Europe",
+        "latency":  "Sub-15ms across major EU markets",
+        "services":  [
+                         "Compliant secure storage",
+                         "Industrial IoT backends",
+                         "Automotive simulation grids"
+                     ],
+        "benefits":  [
+                         "DGSVO / GDPR conformity",
+                         "Central European geographic hub",
+                         "Extremely secure environments"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Model registry",
+                               "Amazon Textract",
+                               "Amazon Comprehend"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon Aurora",
+                            "AWS IoT Core"
+                        ],
+        "workloads":  [
+                          "Industrial IoT telemetry grids",
+                          "Automotive supply-chain tracking",
+                          "Strict German data privacy nodes"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.618Z",
+        "updatedAt":  "2026-06-14T21:07:20.618Z"
+    },
+    {
+        "id":  "cmqe9zany005ftl416twhgs8d",
+        "awsRegionCode":  "eu-south-1",
+        "name":  "Europe (Italy)",
+        "regionCode":  "IT",
+        "flag":  "🇮🇹",
+        "flagUrl":  "https://flagcdn.com/it.svg",
+        "displayOrder":  50,
+        "latitude":  45.4408,
+        "longitude":  9.184,
+        "categoryId":  "cmqe9zakn0001tl41wc2g45nn",
+        "category":  {
+                         "id":  "cmqe9zakn0001tl41wc2g45nn",
+                         "name":  "Europe",
+                         "slug":  "europe",
+                         "flag":  "https://flagcdn.com/eu.svg",
+                         "displayOrder":  2,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.520Z",
+                         "updatedAt":  "2026-06-14T21:07:20.520Z"
+                     },
+        "infrastructureDescription":  "Local Italian region providing highly performant resources to Southern European markets.",
+        "availabilityZones":  3,
+        "launchYear":  2020,
+        "primaryLocation":  "Milan",
+        "compliance":  "GDPR",
+        "totalServices":  "190+",
+        "aimlServices":  "25+",
+        "analyticsServices":  "20+",
+        "networkingServices":  "18+",
+        "edgeLocations":  "15+",
+        "directConnect":  "Available",
+        "reach":  "Southern Europe",
+        "latency":  "Optimized Mediterranean connectivity",
+        "services":  [
+                         "Microservices API hosting",
+                         "Disaster recovery targets",
+                         "Local edge processing"
+                     ],
+        "benefits":  [
+                         "Data sovereignty for Italian enterprises",
+                         "Sub-10ms response times locally",
+                         "High availability clustering"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Studio Notebooks",
+                               "Amazon Polly"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon RDS",
+                            "AWS Lambda",
+                            "Amazon SQS"
+                        ],
+        "workloads":  [
+                          "Italian public administration portals",
+                          "Local media distribution hubs",
+                          "Disaster recovery targets"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.638Z",
+        "updatedAt":  "2026-06-14T21:07:20.638Z"
+    },
+    {
+        "id":  "cmqe9zaoh006btl41ldxe181z",
+        "awsRegionCode":  "eu-north-1",
+        "name":  "Europe (Sweden)",
+        "regionCode":  "SE",
+        "flag":  "🇸🇪",
+        "flagUrl":  "https://flagcdn.com/se.svg",
+        "displayOrder":  60,
+        "latitude":  59.3293,
+        "longitude":  18.0686,
+        "categoryId":  "cmqe9zakn0001tl41wc2g45nn",
+        "category":  {
+                         "id":  "cmqe9zakn0001tl41wc2g45nn",
+                         "name":  "Europe",
+                         "slug":  "europe",
+                         "flag":  "https://flagcdn.com/eu.svg",
+                         "displayOrder":  2,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.520Z",
+                         "updatedAt":  "2026-06-14T21:07:20.520Z"
+                     },
+        "infrastructureDescription":  "Nordic region designed for high efficiency and sustainability, matching local green energy initiatives.",
+        "availabilityZones":  3,
+        "launchYear":  2018,
+        "primaryLocation":  "Stockholm",
+        "compliance":  "GDPR, Nordic Standards",
+        "totalServices":  "210+",
+        "aimlServices":  "30+",
+        "analyticsServices":  "22+",
+        "networkingServices":  "20+",
+        "edgeLocations":  "12+",
+        "directConnect":  "Available",
+        "reach":  "Nordic \u0026 Baltic Regions",
+        "latency":  "Low-latency Northern Europe access",
+        "services":  [
+                         "High-efficiency compute",
+                         "Real-time streaming backends",
+                         "Analytics platforms"
+                     ],
+        "benefits":  [
+                         "Low carbon footprint operations",
+                         "Fast access for Baltic and Nordic users",
+                         "Strong compliance standards"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Data Wrangler",
+                               "Amazon Kendra"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon ECS",
+                            "Amazon DynamoDB"
+                        ],
+        "workloads":  [
+                          "Nordic green-energy monitoring platforms",
+                          "Baltic streaming services backends",
+                          "Localized secure application hosting"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.657Z",
+        "updatedAt":  "2026-06-14T21:07:20.657Z"
+    },
+    {
+        "id":  "cmqe9zaow0077tl41fwyl1ww6",
+        "awsRegionCode":  "ap-south-1",
+        "name":  "India (Mumbai)",
+        "regionCode":  "IN",
+        "flag":  "🇮🇳",
+        "flagUrl":  "https://flagcdn.com/in.svg",
+        "displayOrder":  70,
+        "latitude":  19.076,
+        "longitude":  72.8777,
+        "categoryId":  "cmqe9zakp0002tl41g6hf02cs",
+        "category":  {
+                         "id":  "cmqe9zakp0002tl41g6hf02cs",
+                         "name":  "India",
+                         "slug":  "india",
+                         "flag":  "https://flagcdn.com/in.svg",
+                         "displayOrder":  3,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.521Z",
+                         "updatedAt":  "2026-06-14T21:07:20.521Z"
+                     },
+        "infrastructureDescription":  "A key South Asian region supporting millions of digital developers, startups, and enterprise companies.",
+        "availabilityZones":  3,
+        "launchYear":  2016,
+        "primaryLocation":  "Mumbai",
+        "compliance":  "India Data Residency",
+        "totalServices":  "220+",
+        "aimlServices":  "35+",
+        "analyticsServices":  "25+",
+        "networkingServices":  "22+",
+        "edgeLocations":  "20+",
+        "directConnect":  "Available",
+        "reach":  "South Asia",
+        "latency":  "Optimized for India-wide access",
+        "services":  [
+                         "Mobile application backends",
+                         "E-commerce databases",
+                         "SaaS infrastructure scaling",
+                         "AdTech processing systems"
+                     ],
+        "benefits":  [
+                         "Sovereign Indian data hosting",
+                         "Fast local load times",
+                         "Reduced routing latency"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Model Hosting",
+                               "Bedrock APIs",
+                               "Amazon Rekognition",
+                               "Amazon Lex"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon EKS",
+                            "Amazon DynamoDB",
+                            "Amazon RDS"
+                        ],
+        "workloads":  [
+                          "High-volume mobile banking gateways",
+                          "E-commerce transactional backends",
+                          "Start-up app microservice grids"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.672Z",
+        "updatedAt":  "2026-06-14T21:07:20.672Z"
+    },
+    {
+        "id":  "cmqe9zapf008btl416pb3lcnb",
+        "awsRegionCode":  "ap-south-2",
+        "name":  "India (Hyderabad)",
+        "regionCode":  "IN",
+        "flag":  "🇮🇳",
+        "flagUrl":  "https://flagcdn.com/in.svg",
+        "displayOrder":  80,
+        "latitude":  17.385,
+        "longitude":  78.486,
+        "categoryId":  "cmqe9zakp0002tl41g6hf02cs",
+        "category":  {
+                         "id":  "cmqe9zakp0002tl41g6hf02cs",
+                         "name":  "India",
+                         "slug":  "india",
+                         "flag":  "https://flagcdn.com/in.svg",
+                         "displayOrder":  3,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.521Z",
+                         "updatedAt":  "2026-06-14T21:07:20.521Z"
+                     },
+        "infrastructureDescription":  "AWS\u0027s second region in India, offering redundancy, backup targets, and low latency for Central/Southern India.",
+        "availabilityZones":  3,
+        "launchYear":  2022,
+        "primaryLocation":  "Hyderabad",
+        "compliance":  "India Data Residency",
+        "totalServices":  "200+",
+        "aimlServices":  "30+",
+        "analyticsServices":  "22+",
+        "networkingServices":  "20+",
+        "edgeLocations":  "20+",
+        "directConnect":  "Available",
+        "reach":  "Central \u0026 Southern India",
+        "latency":  "Enhanced intra-country routing",
+        "services":  [
+                         "Regional database replication",
+                         "Enterprise analytics pipelines",
+                         "Disaster recovery solutions"
+                     ],
+        "benefits":  [
+                         "Intra-country disaster recovery",
+                         "High compliance alignment",
+                         "Enhanced local routing speeds"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Pipelines",
+                               "Amazon Translate"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon Aurora",
+                            "Amazon S3",
+                            "AWS Backup"
+                        ],
+        "workloads":  [
+                          "Disaster recovery replicas for Mumbai",
+                          "Telco network analytics pipelines",
+                          "Sovereign local cloud storage"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.691Z",
+        "updatedAt":  "2026-06-14T21:07:20.691Z"
+    },
+    {
+        "id":  "cmqe9zapu0097tl412wor97cg",
+        "awsRegionCode":  "ap-southeast-1",
+        "name":  "Singapore",
+        "regionCode":  "SG",
+        "flag":  "🇸🇬",
+        "flagUrl":  "https://flagcdn.com/sg.svg",
+        "displayOrder":  90,
+        "latitude":  1.3521,
+        "longitude":  103.8198,
+        "categoryId":  "cmqe9zakq0003tl41v0ubqxdi",
+        "category":  {
+                         "id":  "cmqe9zakq0003tl41v0ubqxdi",
+                         "name":  "Asia Pacific",
+                         "slug":  "singapore",
+                         "flag":  "https://flagcdn.com/sg.svg",
+                         "displayOrder":  4,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.523Z",
+                         "updatedAt":  "2026-06-14T21:07:20.523Z"
+                     },
+        "infrastructureDescription":  "The primary Southeast Asian hub, acting as the gateway for regional web, mobile, and SaaS delivery.",
+        "availabilityZones":  3,
+        "launchYear":  2010,
+        "primaryLocation":  "Singapore",
+        "compliance":  "ASEAN Regulations",
+        "totalServices":  "230+",
+        "aimlServices":  "35+",
+        "analyticsServices":  "25+",
+        "networkingServices":  "22+",
+        "edgeLocations":  "25+",
+        "directConnect":  "Available",
+        "reach":  "Southeast Asia",
+        "latency":  "Regional ASEAN gateway",
+        "services":  [
+                         "FinTech processing gateways",
+                         "SaaS multi-tenant clusters",
+                         "Dynamic content delivery"
+                     ],
+        "benefits":  [
+                         "Gateway to ASEAN markets",
+                         "High density global connections",
+                         "Ultra-fast trans-pacific routes"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Studio",
+                               "Bedrock Inference",
+                               "Amazon Translate",
+                               "Amazon Lex"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon EKS",
+                            "Amazon Aurora"
+                        ],
+        "workloads":  [
+                          "ASEAN FinTech microservices hubs",
+                          "Multi-tenant SaaS distribution nodes",
+                          "Regional CDN edge ingestions"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.707Z",
+        "updatedAt":  "2026-06-14T21:07:20.707Z"
+    },
+    {
+        "id":  "cmqean92u000wrfyqhcme10u0",
+        "awsRegionCode":  "ap-northeast-3",
+        "name":  "Tokyo Test Region",
+        "regionCode":  "JP",
+        "flag":  "JP",
+        "flagUrl":  null,
+        "displayOrder":  0,
+        "latitude":  35.6764,
+        "longitude":  139.65,
+        "categoryId":  "cmqe9zaks0004tl41l9x5ipli",
+        "category":  {
+                         "id":  "cmqe9zaks0004tl41l9x5ipli",
+                         "name":  "Japan",
+                         "slug":  "japan",
+                         "flag":  "https://flagcdn.com/jp.svg",
+                         "displayOrder":  5,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.524Z",
+                         "updatedAt":  "2026-06-14T21:07:20.524Z"
+                     },
+        "infrastructureDescription":  "",
+        "availabilityZones":  3,
+        "launchYear":  2026,
+        "primaryLocation":  "",
+        "compliance":  "",
+        "totalServices":  "200+",
+        "aimlServices":  "30+",
+        "analyticsServices":  "20+",
+        "networkingServices":  "20+",
+        "edgeLocations":  "10+",
+        "directConnect":  "Available",
+        "reach":  "Global",
+        "latency":  "Low",
+        "services":  [
+                         "Amazon EC2"
+                     ],
+        "benefits":  [
+                         "Ultra-low latency for Japan"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Model Hosting"
+                           ],
+        "topServices":  [
+                            "Amazon EKS"
+                        ],
+        "workloads":  [
+                          "High-speed gaming platform hosting"
+                      ],
+        "createdAt":  "2026-06-14T21:25:58.326Z",
+        "updatedAt":  "2026-06-14T21:25:58.326Z"
+    },
+    {
+        "id":  "cmqe9zaqr00b5tl41zgggfx46",
+        "awsRegionCode":  "ap-northeast-1",
+        "name":  "Tokyo",
+        "regionCode":  "JP",
+        "flag":  "🇯🇵",
+        "flagUrl":  "https://flagcdn.com/jp.svg",
+        "displayOrder":  110,
+        "latitude":  35.6762,
+        "longitude":  139.6503,
+        "categoryId":  "cmqe9zaks0004tl41l9x5ipli",
+        "category":  {
+                         "id":  "cmqe9zaks0004tl41l9x5ipli",
+                         "name":  "Japan",
+                         "slug":  "japan",
+                         "flag":  "https://flagcdn.com/jp.svg",
+                         "displayOrder":  5,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.524Z",
+                         "updatedAt":  "2026-06-14T21:07:20.524Z"
+                     },
+        "infrastructureDescription":  "One of the busiest Asian regions, running highly automated services for Japanese and East Asian consumer grids.",
+        "availabilityZones":  4,
+        "launchYear":  2011,
+        "primaryLocation":  "Tokyo",
+        "compliance":  "Financial \u0026 Government Standards",
+        "totalServices":  "230+",
+        "aimlServices":  "35+",
+        "analyticsServices":  "25+",
+        "networkingServices":  "22+",
+        "edgeLocations":  "20+",
+        "directConnect":  "Available",
+        "reach":  "East Asia",
+        "latency":  "Ultra-low for Japan",
+        "services":  [
+                         "Gaming platform hosting",
+                         "Financial processing backends",
+                         "AI/ML model processing"
+                     ],
+        "benefits":  [
+                         "Ultra-low latency for East Asia",
+                         "Massive network throughput",
+                         "Disaster resilient design"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Model Hosting",
+                               "Bedrock Foundation Models",
+                               "GPU Clusters (P4)",
+                               "Trainium Nodes"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon EKS",
+                            "Amazon Aurora",
+                            "Amazon DynamoDB"
+                        ],
+        "workloads":  [
+                          "High-throughput gaming backends",
+                          "East Asian financial transaction hubs",
+                          "Real-time robotics telemetry processing"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.740Z",
+        "updatedAt":  "2026-06-14T21:07:20.740Z"
+    },
+    {
+        "id":  "cmqe9zar800c7tl41vp71ws98",
+        "awsRegionCode":  "ap-northeast-2",
+        "name":  "Seoul",
+        "regionCode":  "KR",
+        "flag":  "🇰🇷",
+        "flagUrl":  "https://flagcdn.com/kr.svg",
+        "displayOrder":  120,
+        "latitude":  37.5665,
+        "longitude":  126.978,
+        "categoryId":  "cmqe9zakt0005tl41e46jtyp9",
+        "category":  {
+                         "id":  "cmqe9zakt0005tl41e46jtyp9",
+                         "name":  "Korea",
+                         "slug":  "korea",
+                         "flag":  "https://flagcdn.com/kr.svg",
+                         "displayOrder":  6,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.525Z",
+                         "updatedAt":  "2026-06-14T21:07:20.525Z"
+                     },
+        "infrastructureDescription":  "State-of-the-art data centers in South Korea supporting gaming, mobile AdTech, and e-commerce.",
+        "availabilityZones":  4,
+        "launchYear":  2016,
+        "primaryLocation":  "Seoul",
+        "compliance":  "ISMS, Korean Standards",
+        "totalServices":  "210+",
+        "aimlServices":  "30+",
+        "analyticsServices":  "22+",
+        "networkingServices":  "20+",
+        "edgeLocations":  "10+",
+        "directConnect":  "Available",
+        "reach":  "South Korea",
+        "latency":  "Extremely low for local users",
+        "services":  [
+                         "High-speed game backends",
+                         "IoT telemetry collectors",
+                         "E-commerce databases"
+                     ],
+        "benefits":  [
+                         "Extremely low latency for South Korea",
+                         "Optimized regional fiber peering",
+                         "Korea ISMS certification support"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Canvas",
+                               "Amazon Rekognition"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon ECS",
+                            "Amazon DynamoDB"
+                        ],
+        "workloads":  [
+                          "High-speed mobile game platform hosting",
+                          "IoT factory sensor networks",
+                          "Korean ISMS-compliant enterprise backends"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.757Z",
+        "updatedAt":  "2026-06-14T21:07:20.757Z"
+    },
+    {
+        "id":  "cmqe9zaro00d3tl41yx66wfaw",
+        "awsRegionCode":  "me-central-1",
+        "name":  "UAE",
+        "regionCode":  "AE",
+        "flag":  "🇦🇪",
+        "flagUrl":  "https://flagcdn.com/ae.svg",
+        "displayOrder":  130,
+        "latitude":  24.4539,
+        "longitude":  54.3773,
+        "categoryId":  "cmqe9zaku0006tl41ap6ja24s",
+        "category":  {
+                         "id":  "cmqe9zaku0006tl41ap6ja24s",
+                         "name":  "Middle East",
+                         "slug":  "middle-east",
+                         "flag":  "https://flagcdn.com/ae.svg",
+                         "displayOrder":  7,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.527Z",
+                         "updatedAt":  "2026-06-14T21:07:20.527Z"
+                     },
+        "infrastructureDescription":  "Expanding cloud footprint in the UAE, powering smart city initiatives and public sector digital transformation.",
+        "availabilityZones":  3,
+        "launchYear":  2022,
+        "primaryLocation":  "Abu Dhabi",
+        "compliance":  "UAE Data Regulations",
+        "totalServices":  "180+",
+        "aimlServices":  "20+",
+        "analyticsServices":  "18+",
+        "networkingServices":  "16+",
+        "edgeLocations":  "10+",
+        "directConnect":  "Available",
+        "reach":  "GCC \u0026 Middle East",
+        "latency":  "Optimized Gulf connectivity",
+        "services":  [
+                         "Smart city data platforms",
+                         "Government portal backends",
+                         "Secure localized enterprise databases"
+                     ],
+        "benefits":  [
+                         "Middle East data residency conformity",
+                         "Enhanced GCC routing latency",
+                         "Localized compliance frameworks"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Pipelines",
+                               "Amazon Lex",
+                               "Amazon Translate"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon RDS",
+                            "AWS IoT Core"
+                        ],
+        "workloads":  [
+                          "Smart-city database hubs",
+                          "GCC government digital portal backends",
+                          "Localized oil \u0026 gas IoT analytics"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.772Z",
+        "updatedAt":  "2026-06-14T21:07:20.772Z"
+    },
+    {
+        "id":  "cmqe9zas400e1tl41kdr6veby",
+        "awsRegionCode":  "af-south-1",
+        "name":  "South Africa",
+        "regionCode":  "ZA",
+        "flag":  "🇿🇦",
+        "flagUrl":  "https://flagcdn.com/za.svg",
+        "displayOrder":  140,
+        "latitude":  -33.9249,
+        "longitude":  18.4241,
+        "categoryId":  "cmqe9zakv0007tl41szas7gqf",
+        "category":  {
+                         "id":  "cmqe9zakv0007tl41szas7gqf",
+                         "name":  "Africa",
+                         "slug":  "africa",
+                         "flag":  "https://flagcdn.com/za.svg",
+                         "displayOrder":  8,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.528Z",
+                         "updatedAt":  "2026-06-14T21:07:20.528Z"
+                     },
+        "infrastructureDescription":  "The primary AWS gateway for the African continent, supporting regional cloud growth.",
+        "availabilityZones":  3,
+        "launchYear":  2020,
+        "primaryLocation":  "Cape Town",
+        "compliance":  "POPIA",
+        "totalServices":  "180+",
+        "aimlServices":  "20+",
+        "analyticsServices":  "18+",
+        "networkingServices":  "16+",
+        "edgeLocations":  "8+",
+        "directConnect":  "Available",
+        "reach":  "African Continent",
+        "latency":  "Reduced Sub-Saharan latency",
+        "services":  [
+                         "Cloud migrations",
+                         "Regional web hosting",
+                         "Data indexing pipelines"
+                     ],
+        "benefits":  [
+                         "Sovereign African data hosting",
+                         "Lower latency across Sub-Saharan regions",
+                         "Development support"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Studio",
+                               "Amazon Comprehend"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon ECS",
+                            "Amazon Aurora"
+                        ],
+        "workloads":  [
+                          "Sub-Saharan mobile financial platforms",
+                          "African e-commerce backend hosting",
+                          "Local data residency compliance nodes"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.789Z",
+        "updatedAt":  "2026-06-14T21:07:20.789Z"
+    },
+    {
+        "id":  "cmqe9zasj00extl41ywrfd0o3",
+        "awsRegionCode":  "sa-east-1",
+        "name":  "Brazil",
+        "regionCode":  "BR",
+        "flag":  "🇧🇷",
+        "flagUrl":  "https://flagcdn.com/br.svg",
+        "displayOrder":  150,
+        "latitude":  -23.5505,
+        "longitude":  -46.6333,
+        "categoryId":  "cmqe9zakw0008tl41361ojecb",
+        "category":  {
+                         "id":  "cmqe9zakw0008tl41361ojecb",
+                         "name":  "South America",
+                         "slug":  "south-america",
+                         "flag":  "https://flagcdn.com/br.svg",
+                         "displayOrder":  9,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.529Z",
+                         "updatedAt":  "2026-06-14T21:07:20.529Z"
+                     },
+        "infrastructureDescription":  "The key AWS region for South America, serving major enterprises, FinTechs, and government agencies.",
+        "availabilityZones":  3,
+        "launchYear":  2011,
+        "primaryLocation":  "São Paulo",
+        "compliance":  "LGPD",
+        "totalServices":  "200+",
+        "aimlServices":  "25+",
+        "analyticsServices":  "20+",
+        "networkingServices":  "18+",
+        "edgeLocations":  "15+",
+        "directConnect":  "Available",
+        "reach":  "Latin America",
+        "latency":  "Optimized South American performance",
+        "services":  [
+                         "Financial application backends",
+                         "Dynamic database hosting",
+                         "Global caching"
+                     ],
+        "benefits":  [
+                         "Local latency reduction for South America",
+                         "Brazilian tax/regulatory compliance support",
+                         "High availability redundancy"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Pipelines",
+                               "Amazon Rekognition",
+                               "Amazon Lex"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon EKS",
+                            "Amazon DynamoDB"
+                        ],
+        "workloads":  [
+                          "Latin American digital bank backends",
+                          "Brazilian tax-compliance processing systems",
+                          "High-density retail databases"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.804Z",
+        "updatedAt":  "2026-06-14T21:07:20.804Z"
+    },
+    {
+        "id":  "cmqeas08s0014rfyq6os075s8",
+        "awsRegionCode":  "ap-southeast-3",
+        "name":  "Sydney Test Region",
+        "regionCode":  "AU",
+        "flag":  "AU",
+        "flagUrl":  null,
+        "displayOrder":  0,
+        "latitude":  -33.8688,
+        "longitude":  151.2093,
+        "categoryId":  "cmqe9zakx0009tl41y8wqqkl1",
+        "category":  {
+                         "id":  "cmqe9zakx0009tl41y8wqqkl1",
+                         "name":  "Australia",
+                         "slug":  "australia",
+                         "flag":  "https://flagcdn.com/au.svg",
+                         "displayOrder":  10,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.530Z",
+                         "updatedAt":  "2026-06-14T21:07:20.530Z"
+                     },
+        "infrastructureDescription":  "",
+        "availabilityZones":  3,
+        "launchYear":  2026,
+        "primaryLocation":  "",
+        "compliance":  "",
+        "totalServices":  "200+",
+        "aimlServices":  "30+",
+        "analyticsServices":  "20+",
+        "networkingServices":  "20+",
+        "edgeLocations":  "10+",
+        "directConnect":  "Available",
+        "reach":  "Global",
+        "latency":  "Low",
+        "services":  [
+                         "Amazon EC2"
+                     ],
+        "benefits":  [
+                         "High availability for Oceania"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Pipelines"
+                           ],
+        "topServices":  [
+                            "Amazon ECS"
+                        ],
+        "workloads":  [
+                          "Oceania banking portals"
+                      ],
+        "createdAt":  "2026-06-14T21:29:40.157Z",
+        "updatedAt":  "2026-06-14T21:34:50.417Z"
+    },
+    {
+        "id":  "cmqe9zaqb00a7tl41stux6b82",
+        "awsRegionCode":  "ap-southeast-2",
+        "name":  "Sydney",
+        "regionCode":  "AU",
+        "flag":  "🇦🇺",
+        "flagUrl":  "https://flagcdn.com/au.svg",
+        "displayOrder":  100,
+        "latitude":  -33.8688,
+        "longitude":  151.2093,
+        "categoryId":  "cmqe9zakx0009tl41y8wqqkl1",
+        "category":  {
+                         "id":  "cmqe9zakx0009tl41y8wqqkl1",
+                         "name":  "Australia",
+                         "slug":  "australia",
+                         "flag":  "https://flagcdn.com/au.svg",
+                         "displayOrder":  10,
+                         "isActive":  true,
+                         "createdAt":  "2026-06-14T21:07:20.530Z",
+                         "updatedAt":  "2026-06-14T21:07:20.530Z"
+                     },
+        "infrastructureDescription":  "AWS region in Australia ensuring high-speed local data residency and compliance for Oceania.",
+        "availabilityZones":  3,
+        "launchYear":  2012,
+        "primaryLocation":  "Sydney",
+        "compliance":  "Australian Government Standards",
+        "totalServices":  "210+",
+        "aimlServices":  "30+",
+        "analyticsServices":  "22+",
+        "networkingServices":  "20+",
+        "edgeLocations":  "15+",
+        "directConnect":  "Available",
+        "reach":  "Australia \u0026 New Zealand",
+        "latency":  "Low-latency Oceania access",
+        "services":  [
+                         "Enterprise web systems",
+                         "Mining and industrial analytics",
+                         "Media streaming backends"
+                     ],
+        "benefits":  [
+                         "Oceania data sovereignty",
+                         "Sub-15ms local latency",
+                         "Subsea fiber connectivity"
+                     ],
+        "aiCapabilities":  [
+                               "SageMaker Pipelines",
+                               "Amazon Kendra",
+                               "Amazon Textract"
+                           ],
+        "topServices":  [
+                            "Amazon EC2",
+                            "Amazon S3",
+                            "Amazon RDS",
+                            "Amazon EMR"
+                        ],
+        "workloads":  [
+                          "Natural resource exploration analytics",
+                          "Oceania banking portals",
+                          "Regional government cloud backends"
+                      ],
+        "createdAt":  "2026-06-14T21:07:20.723Z",
+        "updatedAt":  "2026-06-14T21:07:20.723Z"
+    }
+]

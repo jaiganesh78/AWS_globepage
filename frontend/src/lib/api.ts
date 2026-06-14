@@ -10,9 +10,14 @@ export interface AWSRegionData {
   category: string;
   categoryId: string;
   flag: string;
+  flagUrl: string | null;
+  displayOrder: number;
   infrastructure: string;
   services: string[];
   benefits: string[];
+  aiCapabilities: string[];
+  topServices: string[];
+  workloads: string[];
 
   // Normalized Specification Fields
   availabilityZones: number;
@@ -50,9 +55,14 @@ function mapRegionToFrontend(r: any): AWSRegionData {
     category: r.category?.name || "",
     categoryId: r.category?.slug || "",
     flag: r.flag,
+    flagUrl: r.flagUrl,
+    displayOrder: r.displayOrder,
     infrastructure: r.infrastructureDescription,
     services: r.services || [],
     benefits: r.benefits || [],
+    aiCapabilities: r.aiCapabilities || [],
+    topServices: r.topServices || [],
+    workloads: r.workloads || [],
     availabilityZones: r.availabilityZones,
     launchYear: r.launchYear,
     primaryLocation: r.primaryLocation,
@@ -68,13 +78,58 @@ function mapRegionToFrontend(r: any): AWSRegionData {
   };
 }
 
-export async function fetchCategories(): Promise<CategoryData[]> {
-  const res = await fetch(`${API_URL}/api/categories`);
+export async function fetchCategories(includeInactive = false): Promise<CategoryData[]> {
+  const url = includeInactive 
+    ? `${API_URL}/api/categories?includeInactive=true`
+    : `${API_URL}/api/categories`;
+  const res = await fetch(url);
   if (!res.ok) {
     throw new Error("Failed to fetch categories");
   }
   const json = await res.json();
   return json.data;
+}
+
+export async function createCategory(data: any): Promise<CategoryData> {
+  const res = await fetch(`${API_URL}/api/categories`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to create category");
+  }
+  const json = await res.json();
+  return json.data;
+}
+
+export async function updateCategory(id: string, data: any): Promise<CategoryData> {
+  const res = await fetch(`${API_URL}/api/categories/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to update category");
+  }
+  const json = await res.json();
+  return json.data;
+}
+
+export async function deleteCategory(id: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/categories/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to delete category");
+  }
 }
 
 export async function fetchRegions(): Promise<AWSRegionData[]> {
@@ -126,4 +181,19 @@ export async function deleteRegion(dbId: string): Promise<void> {
     const err = await res.json();
     throw new Error(err.message || "Failed to delete region");
   }
+}
+
+export async function uploadFlag(file: File): Promise<{ url: string }> {
+  const formData = new FormData();
+  formData.append("flag", file);
+
+  const res = await fetch(`${API_URL}/api/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to upload flag asset");
+  }
+  return res.json();
 }

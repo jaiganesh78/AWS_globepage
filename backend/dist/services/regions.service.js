@@ -1,4 +1,18 @@
 import prisma from "../prisma/index.js";
+import fs from "fs";
+function deleteFlagFile(fileUrl) {
+    if (fileUrl && fileUrl.startsWith("/uploads/")) {
+        const filePath = fileUrl.startsWith("/") ? fileUrl.slice(1) : fileUrl;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(`Failed to delete orphaned flag file: ${filePath}`, err);
+            }
+            else {
+                console.log(`Successfully deleted orphaned flag file: ${filePath}`);
+            }
+        });
+    }
+}
 export class RegionsService {
     mapRegion(r) {
         if (!r)
@@ -9,6 +23,8 @@ export class RegionsService {
             name: r.name,
             regionCode: r.regionCode,
             flag: r.flag,
+            flagUrl: r.flagUrl,
+            displayOrder: r.displayOrder,
             latitude: r.latitude,
             longitude: r.longitude,
             categoryId: r.categoryId,
@@ -60,9 +76,10 @@ export class RegionsService {
                 services: true,
                 benefits: true,
             },
-            orderBy: {
-                awsRegionCode: "asc",
-            },
+            orderBy: [
+                { category: { displayOrder: "asc" } },
+                { displayOrder: "asc" }
+            ],
         };
         if (page !== undefined && limit !== undefined) {
             queryOptions.skip = (page - 1) * limit;
@@ -112,6 +129,8 @@ export class RegionsService {
                     name: regionData.name,
                     regionCode: regionData.regionCode,
                     flag: regionData.flag,
+                    flagUrl: regionData.flagUrl || null,
+                    displayOrder: Number(regionData.displayOrder) || 0,
                     latitude: regionData.latitude,
                     longitude: regionData.longitude,
                     categoryId: regionData.categoryId,
@@ -156,6 +175,13 @@ export class RegionsService {
     async update(id, data) {
         const { services, benefits, ...regionData } = data;
         return prisma.$transaction(async (tx) => {
+            const existing = await tx.region.findUnique({
+                where: { id },
+                select: { flagUrl: true }
+            });
+            if (existing && regionData.flagUrl !== undefined && existing.flagUrl !== regionData.flagUrl) {
+                deleteFlagFile(existing.flagUrl);
+            }
             const updatePayload = {
                 updatedBy: "system-admin",
             };
@@ -167,6 +193,10 @@ export class RegionsService {
                 updatePayload.regionCode = regionData.regionCode;
             if (regionData.flag !== undefined)
                 updatePayload.flag = regionData.flag;
+            if (regionData.flagUrl !== undefined)
+                updatePayload.flagUrl = regionData.flagUrl;
+            if (regionData.displayOrder !== undefined)
+                updatePayload.displayOrder = Number(regionData.displayOrder);
             if (regionData.latitude !== undefined)
                 updatePayload.latitude = Number(regionData.latitude);
             if (regionData.longitude !== undefined)

@@ -1,16 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Plus, Edit2, Trash2, ArrowLeft, Shield, Globe, 
-  CheckCircle, AlertCircle, RefreshCw, X, HelpCircle
-} from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Plus, ArrowLeft, Shield, CheckCircle, AlertCircle, RefreshCw, X, Trash2, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   fetchCategories, fetchRegions, createRegion, updateRegion, deleteRegion,
   AWSRegionData, CategoryData 
 } from '@/lib/api';
+import RegionTable from '@/components/RegionManagement/RegionTable';
+import RegionForm from '@/components/RegionManagement/RegionForm';
+import GlobeScene from '@/components/Globe/GlobeScene';
 
 interface ToastState {
   message: string;
@@ -34,34 +34,45 @@ export default function ManageRegionsPage() {
   // Toast notifications
   const [toast, setToast] = useState<ToastState | null>(null);
 
-  // Form inputs state
-  const [formData, setFormData] = useState({
-    awsRegionCode: '',
-    name: '',
-    regionCode: '',
-    flag: '',
-    latitude: 0,
-    longitude: 0,
-    categoryId: '',
-    infrastructureDescription: '',
-    availabilityZones: 3,
-    launchYear: 2026,
-    primaryLocation: '',
-    compliance: '',
-    totalServices: '200+',
-    aimlServices: '30+',
-    analyticsServices: '20+',
-    networkingServices: '20+',
-    edgeLocations: '10+',
-    directConnect: 'Available',
-    reach: 'Global',
-    latency: 'Low',
-    services: '',
-    benefits: ''
-  });
+  // Coordinate Preview state
+  const [previewData, setPreviewData] = useState<{ name: string; latitude: number; longitude: number; flag: string | null } | null>(null);
 
-  const [formValidationErrors, setFormValidationErrors] = useState<{ field: string; message: string }[]>([]);
-  const [submitting, setSubmitting] = useState(false);
+  // Construct temporary preview region list for Globe scene rendering
+  const previewRegionsList = useMemo(() => {
+    if (!previewData) return [];
+    const tempRegion: AWSRegionData = {
+      id: "preview-temp",
+      dbId: "preview-temp",
+      name: previewData.name || "Preview Location",
+      code: "PREVIEW",
+      lat: previewData.latitude,
+      lng: previewData.longitude,
+      category: "Preview",
+      categoryId: "preview",
+      flag: previewData.flag || "📍",
+      flagUrl: previewData.flag || null,
+      displayOrder: 9999,
+      infrastructure: "Coordinates Location Verification Preview.",
+      services: [],
+      benefits: [],
+      aiCapabilities: [],
+      topServices: [],
+      workloads: [],
+      availabilityZones: 1,
+      launchYear: 2026,
+      primaryLocation: "Preview Location",
+      compliance: "Preview",
+      totalServices: "0",
+      aimlServices: "0",
+      analyticsServices: "0",
+      networkingServices: "0",
+      edgeLocations: "0",
+      directConnect: "Preview",
+      reach: "Preview",
+      latency: "Preview"
+    };
+    return [tempRegion];
+  }, [previewData]);
 
   // Load categories and regions from database
   const loadData = async () => {
@@ -74,11 +85,6 @@ export default function ManageRegionsPage() {
       ]);
       setCategories(catsData);
       setRegions(regsData);
-      
-      // Select first category by default for forms
-      if (catsData.length > 0) {
-        setFormData(prev => ({ ...prev, categoryId: catsData[0].id }));
-      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Failed to load database items.");
@@ -100,126 +106,27 @@ export default function ManageRegionsPage() {
 
   // Prepopulate form for edit
   const handleEditClick = (region: AWSRegionData) => {
-    // Find category ID matching region's category slug
-    const matchingCat = categories.find(c => c.slug === region.categoryId);
-    const categoryId = matchingCat ? matchingCat.id : (categories[0]?.id || '');
-
     setEditingRegion(region);
-    setFormData({
-      awsRegionCode: region.id,
-      name: region.name,
-      regionCode: region.code,
-      flag: region.flag,
-      latitude: region.lat,
-      longitude: region.lng,
-      categoryId,
-      infrastructureDescription: region.infrastructure,
-      availabilityZones: region.availabilityZones,
-      launchYear: region.launchYear,
-      primaryLocation: region.primaryLocation,
-      compliance: region.compliance,
-      totalServices: region.totalServices,
-      aimlServices: region.aimlServices,
-      analyticsServices: region.analyticsServices,
-      networkingServices: region.networkingServices,
-      edgeLocations: region.edgeLocations,
-      directConnect: region.directConnect,
-      reach: region.reach,
-      latency: region.latency,
-      services: region.services.join(', '),
-      benefits: region.benefits.join(', ')
-    });
-    setFormValidationErrors([]);
     setIsFormOpen(true);
   };
 
   // Open empty form for add
   const handleAddClick = () => {
     setEditingRegion(null);
-    setFormData({
-      awsRegionCode: '',
-      name: '',
-      regionCode: '',
-      flag: '',
-      latitude: 0,
-      longitude: 0,
-      categoryId: categories[0]?.id || '',
-      infrastructureDescription: '',
-      availabilityZones: 3,
-      launchYear: 2026,
-      primaryLocation: '',
-      compliance: '',
-      totalServices: '200+',
-      aimlServices: '30+',
-      analyticsServices: '20+',
-      networkingServices: '20+',
-      edgeLocations: '10+',
-      directConnect: 'Available',
-      reach: 'Global',
-      latency: 'Low',
-      services: '',
-      benefits: ''
-    });
-    setFormValidationErrors([]);
     setIsFormOpen(true);
   };
 
-  // Handle form field changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'latitude' || name === 'longitude' || name === 'availabilityZones' || name === 'launchYear'
-        ? Number(value)
-        : value
-    }));
-  };
-
-  // Form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setFormValidationErrors([]);
-
-    // Format services/benefits arrays
-    const payload = {
-      ...formData,
-      services: formData.services.split(',').map(s => s.trim()).filter(s => s !== ''),
-      benefits: formData.benefits.split(',').map(b => b.trim()).filter(b => b !== '')
-    };
-
-    try {
-      if (editingRegion) {
-        await updateRegion(editingRegion.dbId, payload);
-        showToast("AWS Region updated successfully", "success");
-      } else {
-        await createRegion(payload);
-        showToast("New AWS Region created successfully", "success");
-      }
-      setIsFormOpen(false);
-      loadData();
-    } catch (err: any) {
-      console.error(err);
-      if (err.message && err.message.includes("Validation failed")) {
-        // Backend validation errors - try to parse if structure matches
-        try {
-          // Check if we can parse custom error structures
-          // Since our API client returns throw new Error(err.message || ...)
-          // we should ensure it can be displayed
-        } catch (e) {}
-      }
-      
-      // Standardize extracting validation errors or displaying generic message
-      showToast(err.message || "Failed to save region.", "error");
-      
-      // If error message is validation failures list, we can extract details
-      // Simple parse of common backend conflict errors
-      if (err.message && err.message.includes("already exists")) {
-        setFormValidationErrors([{ field: 'awsRegionCode', message: err.message }]);
-      }
-    } finally {
-      setSubmitting(false);
+  // Form submission handler
+  const handleFormSubmit = async (payload: any) => {
+    if (editingRegion) {
+      await updateRegion(editingRegion.dbId, payload);
+      showToast("AWS Region updated successfully", "success");
+    } else {
+      await createRegion(payload);
+      showToast("New AWS Region created successfully", "success");
     }
+    setIsFormOpen(false);
+    loadData();
   };
 
   // Trigger soft delete
@@ -267,14 +174,22 @@ export default function ManageRegionsPage() {
           </div>
         </div>
 
-        {/* Back Link */}
-        <Link
-          href="/"
-          className="px-6 py-2.5 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-sm flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-wider cursor-pointer group transition-all duration-300 hover:shadow-md hover:border-slate-300 hover:text-slate-900"
-        >
-          <ArrowLeft size={12} className="transition-transform duration-300 group-hover:-translate-x-0.5" /> 
-          <span>Back to Explorer</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/manage-categories"
+            className="px-6 py-2.5 rounded-xl bg-[#0073BB]/10 hover:bg-[#0073BB]/20 text-[#0073BB] border border-[#0073BB]/20 shadow-sm flex items-center gap-2 text-[10px] font-black uppercase tracking-wider cursor-pointer transition-all duration-300 hover:shadow-md"
+          >
+            <span>Manage Categories</span>
+          </Link>
+          
+          <Link
+            href="/"
+            className="px-6 py-2.5 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-sm flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-wider cursor-pointer group transition-all duration-300 hover:shadow-md hover:border-slate-300 hover:text-slate-900"
+          >
+            <ArrowLeft size={12} className="transition-transform duration-300 group-hover:-translate-x-0.5" /> 
+            <span>Back to Explorer</span>
+          </Link>
+        </div>
       </nav>
 
       {/* TOAST SYSTEM */}
@@ -303,11 +218,11 @@ export default function ManageRegionsPage() {
             onClick={handleAddClick}
             className="px-8 py-4 bg-[#1A1C1E] hover:bg-[#0073BB] text-white rounded-2xl font-black uppercase text-[11px] tracking-widest flex items-center gap-2 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
-            <Plus size={16} /> Add Presense Node
+            <Plus size={16} /> Add Presence Node
           </button>
         </div>
 
-        {/* LOADING / ERRORFallback STATES */}
+        {/* LOADING / ERROR STATES */}
         {loading && (
           <div className="py-24 flex flex-col items-center justify-center gap-4">
             <RefreshCw className="animate-spin text-slate-400" size={32} />
@@ -334,66 +249,18 @@ export default function ManageRegionsPage() {
         {/* REGIONS GRID LIST */}
         {!loading && !error && regions.length === 0 && (
           <div className="py-24 text-center bg-white border border-slate-100 rounded-[2.5rem] shadow-sm">
-            <Globe size={48} className="text-slate-200 mx-auto mb-6" />
-            <h3 className="text-slate-900 font-black text-xl">Database Empty</h3>
+            <Shield size={48} className="text-slate-200 mx-auto mb-6" />
+            <h3 className="text-slate-950 font-black text-xl">Database Empty</h3>
             <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-2">No active presence nodes in this partition mesh</p>
           </div>
         )}
 
         {!loading && !error && regions.length > 0 && (
-          <div className="bg-white border border-slate-100 rounded-[2.5rem] shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-50 text-[10px] font-black uppercase text-slate-400 tracking-widest bg-slate-50/50">
-                    <th className="py-6 px-8">Flag</th>
-                    <th className="py-6 px-6">Name</th>
-                    <th className="py-6 px-6">AWS Region Code</th>
-                    <th className="py-6 px-6">Category</th>
-                    <th className="py-6 px-6">Coordinates</th>
-                    <th className="py-6 px-8 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50">
-                  {regions.map((region) => (
-                    <tr key={region.dbId} className="hover:bg-slate-50/50 transition-colors text-[13px] font-semibold text-slate-600">
-                      <td className="py-6 px-8 text-2xl select-none">{region.flag}</td>
-                      <td className="py-6 px-6 font-bold text-slate-900">{region.name}</td>
-                      <td className="py-6 px-6">
-                        <span className="font-mono text-xs bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md font-bold border border-slate-200/40">
-                          {region.id}
-                        </span>
-                      </td>
-                      <td className="py-6 px-6 font-extrabold text-[#0073BB] uppercase text-[11px] tracking-wider">
-                        {region.category || "Unassigned"}
-                      </td>
-                      <td className="py-6 px-6 font-mono text-xs text-slate-400">
-                        {region.lat.toFixed(4)}, {region.lng.toFixed(4)}
-                      </td>
-                      <td className="py-6 px-8 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => handleEditClick(region)}
-                            title="Edit specifications"
-                            className="p-2.5 rounded-xl border border-slate-100 text-slate-400 hover:text-slate-950 hover:bg-slate-50 transition-all hover:shadow-sm"
-                          >
-                            <Edit2 size={14} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(region)}
-                            title="Decommission node"
-                            className="p-2.5 rounded-xl border border-red-50 text-red-400 hover:text-red-600 hover:bg-red-50 transition-all hover:shadow-sm"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <RegionTable 
+            regions={regions} 
+            onEditClick={handleEditClick} 
+            onDeleteClick={handleDeleteClick} 
+          />
         )}
       </main>
 
@@ -422,7 +289,7 @@ export default function ManageRegionsPage() {
               <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                    {editingRegion ? `Edit ${editingRegion.id} Node` : 'Register Presense Node'}
+                    {editingRegion ? `Edit ${editingRegion.id} Node` : 'Register Presence Node'}
                   </h3>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Configure database metrics</p>
                 </div>
@@ -434,377 +301,16 @@ export default function ManageRegionsPage() {
                 </button>
               </div>
 
-              {/* Form Content (Scrollable) */}
-              <form onSubmit={handleSubmit} className="flex-grow overflow-y-auto premium-scrollbar px-10 py-8 flex flex-col gap-6 pb-24">
-                
-                {/* Error Summary */}
-                {formValidationErrors.length > 0 && (
-                  <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-800 text-xs flex flex-col gap-2">
-                    <p className="font-bold flex items-center gap-1"><AlertCircle size={14} /> Validation Constraints Violated:</p>
-                    <ul className="list-disc pl-5 font-medium flex flex-col gap-0.5">
-                      {formValidationErrors.map((err, i) => (
-                        <li key={i}>{err.message}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Standard Specs Divider */}
-                <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.25em] pb-2 border-b border-slate-50">Standard Presense Parameters</h4>
-
-                <div className="grid grid-cols-2 gap-4">
-                  {/* AWS Region Code */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">AWS Region Code *</label>
-                    <input
-                      type="text"
-                      name="awsRegionCode"
-                      value={formData.awsRegionCode}
-                      onChange={handleInputChange}
-                      placeholder="e.g. us-east-1"
-                      required
-                      disabled={!!editingRegion}
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all disabled:opacity-60"
-                    />
-                  </div>
-
-                  {/* Region Name */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Display Name * (Max 80)</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="e.g. US East (N. Virginia)"
-                      maxLength={80}
-                      required
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Country Code */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Country Code * (e.g. US, CA)</label>
-                    <input
-                      type="text"
-                      name="regionCode"
-                      value={formData.regionCode}
-                      onChange={handleInputChange}
-                      placeholder="e.g. US"
-                      required
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Flag Emoji */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Flag Emoji *</label>
-                    <input
-                      type="text"
-                      name="flag"
-                      value={formData.flag}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 🇺🇸"
-                      required
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Category select */}
-                  <div className="flex flex-col gap-1.5 col-span-2">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Presence Category *</label>
-                    <select
-                      name="categoryId"
-                      value={formData.categoryId}
-                      onChange={handleInputChange}
-                      required
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    >
-                      {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name} ({cat.flag})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Latitude */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Latitude * (-90 to +90)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      name="latitude"
-                      value={formData.latitude}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 38.8048"
-                      min={-90}
-                      max={90}
-                      required
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Longitude */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Longitude * (-180 to +180)</label>
-                    <input
-                      type="number"
-                      step="any"
-                      name="longitude"
-                      value={formData.longitude}
-                      onChange={handleInputChange}
-                      placeholder="e.g. -77.0469"
-                      min={-180}
-                      max={180}
-                      required
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* Infrastructure specs */}
-                <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.25em] mt-4 pb-2 border-b border-slate-50">Infrastructure Specifications</h4>
-
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Infrastructure Description (Max 250)</label>
-                  <textarea
-                    name="infrastructureDescription"
-                    value={formData.infrastructureDescription}
-                    onChange={handleInputChange}
-                    placeholder="Brief description of regional data centers..."
-                    maxLength={250}
-                    rows={3}
-                    className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-semibold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Availability Zones */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Availability Zones</label>
-                    <input
-                      type="number"
-                      name="availabilityZones"
-                      value={formData.availabilityZones}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 3"
-                      min={1}
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Launch Year */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Launch Year</label>
-                    <input
-                      type="number"
-                      name="launchYear"
-                      value={formData.launchYear}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 2016"
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Primary Location */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Primary Location (Max 80)</label>
-                    <input
-                      type="text"
-                      name="primaryLocation"
-                      value={formData.primaryLocation}
-                      onChange={handleInputChange}
-                      placeholder="e.g. Virginia, USA"
-                      maxLength={80}
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Compliance */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Compliance Audits (Max 120)</label>
-                    <input
-                      type="text"
-                      name="compliance"
-                      value={formData.compliance}
-                      onChange={handleInputChange}
-                      placeholder="e.g. FedRAMP, HIPAA, SOC"
-                      maxLength={120}
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* Service coverage */}
-                <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.25em] mt-4 pb-2 border-b border-slate-50">Regional Service Statistics</h4>
-
-                <div className="grid grid-cols-4 gap-4">
-                  {/* Total Services */}
-                  <div className="flex flex-col gap-1.5 col-span-2 md:col-span-1">
-                    <label className="text-[9px] font-black uppercase tracking-wider text-slate-500">Total Services</label>
-                    <input
-                      type="text"
-                      name="totalServices"
-                      value={formData.totalServices}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 200+"
-                      className="px-3 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* AI/ML Services */}
-                  <div className="flex flex-col gap-1.5 col-span-2 md:col-span-1">
-                    <label className="text-[9px] font-black uppercase tracking-wider text-slate-500">AI/ML</label>
-                    <input
-                      type="text"
-                      name="aimlServices"
-                      value={formData.aimlServices}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 30+"
-                      className="px-3 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Analytics Services */}
-                  <div className="flex flex-col gap-1.5 col-span-2 md:col-span-1">
-                    <label className="text-[9px] font-black uppercase tracking-wider text-slate-500">Analytics</label>
-                    <input
-                      type="text"
-                      name="analyticsServices"
-                      value={formData.analyticsServices}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 20+"
-                      className="px-3 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Networking Services */}
-                  <div className="flex flex-col gap-1.5 col-span-2 md:col-span-1">
-                    <label className="text-[9px] font-black uppercase tracking-wider text-slate-500">Networking</label>
-                    <input
-                      type="text"
-                      name="networkingServices"
-                      value={formData.networkingServices}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 20+"
-                      className="px-3 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* Connectivity */}
-                <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.25em] mt-4 pb-2 border-b border-slate-50">Global Connectivity Metric</h4>
-
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Edge Locations */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Edge Locations</label>
-                    <input
-                      type="text"
-                      name="edgeLocations"
-                      value={formData.edgeLocations}
-                      onChange={handleInputChange}
-                      placeholder="e.g. 15+"
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Direct Connect */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Direct Connect</label>
-                    <input
-                      type="text"
-                      name="directConnect"
-                      value={formData.directConnect}
-                      onChange={handleInputChange}
-                      placeholder="e.g. Available / Supported"
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Reach */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Regional Reach (Max 120)</label>
-                    <input
-                      type="text"
-                      name="reach"
-                      value={formData.reach}
-                      onChange={handleInputChange}
-                      placeholder="e.g. Global / Americas"
-                      maxLength={120}
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-
-                  {/* Latency */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Latency Profile (Max 120)</label>
-                    <input
-                      type="text"
-                      name="latency"
-                      value={formData.latency}
-                      onChange={handleInputChange}
-                      placeholder="e.g. Low latency across EU"
-                      maxLength={120}
-                      className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-bold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                {/* Sub-Items Arrays */}
-                <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.25em] mt-4 pb-2 border-b border-slate-50">Detailed Spec Lists</h4>
-
-                {/* Services */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Core Services (Comma separated)</label>
-                  <textarea
-                    name="services"
-                    value={formData.services}
-                    onChange={handleInputChange}
-                    placeholder="e.g. Amazon EC2, AWS Lambda, Amazon S3"
-                    rows={2}
-                    className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-semibold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all resize-none"
-                  />
-                </div>
-
-                {/* Benefits */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-wider text-slate-500">Key Benefits (Comma separated)</label>
-                  <textarea
-                    name="benefits"
-                    value={formData.benefits}
-                    onChange={handleInputChange}
-                    placeholder="e.g. Sub-millisecond latency, Sovereign data hosting"
-                    rows={2}
-                    className="px-4 py-3 rounded-xl border border-slate-200/80 bg-slate-50/30 text-xs font-semibold focus:ring-1 focus:ring-[#0073BB]/20 focus:border-[#0073BB]/40 outline-none transition-all resize-none"
-                  />
-                </div>
-
-                {/* Bottom Spacer */}
-                <div className="h-8" />
-              </form>
-
-              {/* Sticky bottom save bar */}
-              <div className="absolute bottom-0 left-0 right-0 p-8 bg-white/95 backdrop-blur-md border-t border-slate-100 flex items-center justify-end gap-3 z-20">
-                <button
-                  type="button"
-                  onClick={() => setIsFormOpen(false)}
-                  className="px-6 py-4 border border-slate-200 text-slate-500 hover:text-slate-900 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={submitting}
-                  className="px-8 py-4 bg-[#1A1C1E] hover:bg-[#0073BB] disabled:bg-slate-400 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-2"
-                >
-                  {submitting && <RefreshCw className="animate-spin" size={12} />}
-                  <span>{editingRegion ? 'Save Changes' : 'Initialize Node'}</span>
-                </button>
-              </div>
+              {/* Form Component */}
+              <RegionForm 
+                categories={categories}
+                editingRegion={editingRegion}
+                onSubmit={handleFormSubmit}
+                onCancel={() => setIsFormOpen(false)}
+                onPreviewLocation={(name, lat, lng, flag) => {
+                  setPreviewData({ name, latitude: lat, longitude: lng, flag });
+                }}
+              />
             </motion.div>
           </div>
         )}
@@ -854,6 +360,80 @@ export default function ManageRegionsPage() {
                   Confirm Delete
                 </button>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* COORDINATE PREVIEW DIALOG MODAL */}
+      <AnimatePresence>
+        {previewData && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-6">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setPreviewData(null)}
+              className="absolute inset-0 bg-slate-950/40 backdrop-blur-md"
+            />
+
+            {/* Modal Panel */}
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-white border border-slate-100 rounded-[2.5rem] p-8 max-w-2xl w-full h-[650px] shadow-2xl z-10 flex flex-col items-center overflow-hidden"
+            >
+              {/* Header */}
+              <div className="w-full flex items-center justify-between pb-4 border-b border-slate-100 mb-4 select-none">
+                <div>
+                  <h3 className="text-xl font-black text-slate-900 tracking-tight">Location Verification Preview</h3>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                    Visualizing input coordinates on standard Earth sphere
+                  </p>
+                </div>
+                <button 
+                  onClick={() => setPreviewData(null)}
+                  className="p-2 rounded-xl hover:bg-slate-50 text-slate-400 hover:text-slate-950 transition-all"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Coordinates Info Panel */}
+              <div className="w-full grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-200/50 mb-4 text-xs font-bold text-slate-600">
+                <div>
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider block mb-1">Target Coordinates</span>
+                  <p className="font-mono text-slate-900">Lat: {previewData.latitude.toFixed(6)}, Lng: {previewData.longitude.toFixed(6)}</p>
+                </div>
+                <div>
+                  <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider block mb-1">Resolved Node Name</span>
+                  <p className="text-[#0073BB] font-black">{previewData.name}</p>
+                </div>
+              </div>
+
+              {/* Globe Scene Container */}
+              <div className="w-full flex-grow relative bg-[#F8F9FA] rounded-[1.75rem] border border-slate-100 overflow-hidden shadow-inner flex items-center justify-center mb-6">
+                <div className="w-full h-full absolute flex items-center justify-center">
+                  <div className="w-[500px] h-[500px] relative">
+                    <GlobeScene
+                      regions={previewRegionsList}
+                      onSelectRegion={() => {}}
+                      selectedRegion={previewRegionsList[0]}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer Close Button */}
+              <button
+                type="button"
+                onClick={() => setPreviewData(null)}
+                className="w-full py-4 bg-[#1A1C1E] hover:bg-[#0073BB] text-white rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all"
+              >
+                Close Location Verification
+              </button>
             </motion.div>
           </div>
         )}

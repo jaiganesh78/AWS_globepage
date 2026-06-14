@@ -1,28 +1,21 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Html } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as THREE from 'three';
 import { AWSRegionData } from '@/lib/api';
+import FlagImage from '../Layout/FlagImage';
+import { latLngToXYZ } from '@/utils/coordinates';
+import { useFrame } from '@react-three/fiber';
 
 interface RegionMarkersProps {
   regions: AWSRegionData[];
   onSelect: (item: AWSRegionData) => void;
-  onHover: (id: string | null) => void;
   selectedId?: string | null;
 }
 
-function latLngToXYZ(lat: number, lng: number, r: number): [number, number, number] {
-  const phi = (90 - lat) * (Math.PI / 180);
-  const theta = (lng + 180) * (Math.PI / 180);
-  const x = -(r * Math.sin(phi) * Math.cos(theta));
-  const y = r * Math.cos(phi);
-  const z = r * Math.sin(phi) * Math.sin(theta);
-  return [x, y, z];
-}
-
-export default function RegionMarkers({ regions, onSelect, onHover, selectedId }: RegionMarkersProps) {
+export default function RegionMarkers({ regions, onSelect, selectedId }: RegionMarkersProps) {
   const hasSelection = !!selectedId;
   return (
     <group>
@@ -33,7 +26,6 @@ export default function RegionMarkers({ regions, onSelect, onHover, selectedId }
           position={latLngToXYZ(item.lat, item.lng, 1.02)}
           labelPosition={latLngToXYZ(item.lat, item.lng, 1.15)}
           onSelect={onSelect}
-          onHover={onHover}
           isSelected={selectedId === item.id}
           isDimmed={hasSelection && selectedId !== item.id}
         />
@@ -44,45 +36,123 @@ export default function RegionMarkers({ regions, onSelect, onHover, selectedId }
 
 function Dot({
   item, position, labelPosition,
-  onSelect, onHover, isSelected, isDimmed,
+  onSelect, isSelected, isDimmed,
 }: {
   item: AWSRegionData;
   position: [number, number, number];
   labelPosition: [number, number, number];
   onSelect: (item: AWSRegionData) => void;
-  onHover: (id: string | null) => void;
   isSelected: boolean;
   isDimmed: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
+  const haloRef = useRef<THREE.Mesh>(null);
+  const selectedWireframeRef = useRef<THREE.Mesh>(null);
 
-  const color = isSelected ? '#FF9900' : (hovered ? '#FF7F00' : '#E65100');
+  // AWS Premium Theme Colors (Neon Electric Blue / Cyan theme)
+  const coreColor = isSelected 
+    ? '#0073BB' // Selected Electric Blue
+    : (hovered ? '#00F0FF' : '#00E5FF'); // Hover Bright Cyan / Idle Cyan
+
+  const haloColor = isSelected 
+    ? '#00E5FF' 
+    : (hovered ? '#00E5FF' : '#0073BB');
+
   const opacity = isDimmed ? 0.35 : 1.0;
-  const radius = isSelected ? 0.022 : (hovered ? 0.018 : 0.015);
+  const coreRadius = isSelected 
+    ? 0.024 
+    : (hovered ? 0.020 : 0.016);
+
+  const haloOpacity = isDimmed 
+    ? 0.1 
+    : (isSelected ? 0.35 : (hovered ? 0.3 : 0.15));
+
+  // Single animation loop for performance: slow, low-frequency breathing glow
+  useFrame((state) => {
+    const elapsed = state.clock.getElapsedTime();
+    if (haloRef.current) {
+      // Restrict scale oscillation to under 3% to prevent excessive pulsing
+      const scale = 1.0 + Math.sin(elapsed * 1.5) * 0.025;
+      haloRef.current.scale.set(scale, scale, scale);
+    }
+    if (selectedWireframeRef.current) {
+      // Rotate holographic wireframe orb
+      selectedWireframeRef.current.rotation.y = elapsed * 0.5;
+      selectedWireframeRef.current.rotation.x = elapsed * 0.2;
+    }
+  });
 
   return (
     <group>
-      {/* Invisible hitbox for easy clicking */}
+      {/* Invisible click target/hitbox */}
       <mesh
         position={position}
         renderOrder={4}
         onClick={(e) => { e.stopPropagation(); onSelect(item); }}
-        onPointerOver={(e) => { e.stopPropagation(); setHovered(true); onHover(item.id); document.body.style.cursor = 'pointer'; }}
-        onPointerOut={(e) => { e.stopPropagation(); setHovered(false); onHover(null); document.body.style.cursor = 'auto'; }}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          if (!isSelected) {
+            setHovered(true);
+          }
+          document.body.style.cursor = 'pointer';
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          if (!isSelected) {
+            setHovered(false);
+          }
+          document.body.style.cursor = 'auto';
+        }}
       >
         <sphereGeometry args={[0.065, 10, 10]} />
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
 
-      {/* Static dot — depth-tested against the globe so back-face dots are hidden */}
+      {/* Solid Inner Core Dot */}
       <mesh position={position} raycast={() => null as any} renderOrder={3}>
-        <sphereGeometry args={[radius, 16, 16]} />
+        <sphereGeometry args={[coreRadius, 16, 16]} />
         <meshBasicMaterial
-          color={color}
+          color={coreColor}
           transparent={isDimmed}
           opacity={opacity}
         />
       </mesh>
+
+      {/* Soft Breathing 3D Glow Halo */}
+      <mesh 
+        ref={haloRef}
+        position={position} 
+        raycast={() => null as any} 
+        renderOrder={2}
+      >
+        <sphereGeometry args={[coreRadius * 2.5, 16, 16]} />
+        <meshBasicMaterial
+          color={haloColor}
+          transparent={true}
+          opacity={haloOpacity}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+
+      {/* Selected holographic wireframe orb */}
+      {isSelected && (
+        <mesh 
+          ref={selectedWireframeRef}
+          position={position} 
+          raycast={() => null as any} 
+          renderOrder={1}
+        >
+          <sphereGeometry args={[0.045, 12, 12]} />
+          <meshBasicMaterial
+            color="#00E5FF"
+            transparent
+            opacity={0.25}
+            wireframe={true}
+            depthWrite={false}
+          />
+        </mesh>
+      )}
 
       {/* Hover label */}
       {hovered && !isSelected && (
@@ -93,7 +163,7 @@ function Dot({
             style={{ fontSize: '10px' }}
             className="px-3 py-1.5 bg-white/95 backdrop-blur-md text-[#1A1C1E] rounded-xl shadow-[0_10px_30px_rgba(0,115,187,0.15)] border border-slate-100 whitespace-nowrap flex items-center gap-2"
           >
-            <span className="text-base">{item.flag}</span>
+            <FlagImage flag={item.flagUrl || item.flag} name={item.name} className="w-5 h-3.5 object-contain" />
             <span className="font-black tracking-tight text-slate-800 uppercase">{item.name}</span>
           </motion.div>
         </Html>
@@ -111,7 +181,7 @@ function Dot({
               style={{ fontSize: '10px' }}
               className="px-3 py-1.5 bg-[#0073BB] text-white rounded-xl shadow-[0_10px_30px_rgba(0,163,255,0.3)] border border-[#00A3FF]/30 whitespace-nowrap font-black uppercase tracking-wider flex items-center gap-2"
             >
-              <span className="text-base">{item.flag}</span>
+              <FlagImage flag={item.flagUrl || item.flag} name={item.name} className="w-5 h-3.5 object-contain" />
               <span className="font-extrabold">{item.name}</span>
             </motion.div>
           </Html>

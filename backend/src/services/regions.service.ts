@@ -1,5 +1,19 @@
 import prisma from "../prisma/index.js";
 import { CreateRegionRequest, UpdateRegionRequest } from "../types/index.js";
+import fs from "fs";
+
+function deleteFlagFile(fileUrl: string | null | undefined) {
+  if (fileUrl && fileUrl.startsWith("/uploads/")) {
+    const filePath = fileUrl.startsWith("/") ? fileUrl.slice(1) : fileUrl;
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error(`Failed to delete orphaned flag file: ${filePath}`, err);
+      } else {
+        console.log(`Successfully deleted orphaned flag file: ${filePath}`);
+      }
+    });
+  }
+}
 
 export class RegionsService {
   private mapRegion(r: any) {
@@ -10,6 +24,8 @@ export class RegionsService {
       name: r.name,
       regionCode: r.regionCode,
       flag: r.flag,
+      flagUrl: r.flagUrl,
+      displayOrder: r.displayOrder,
       latitude: r.latitude,
       longitude: r.longitude,
       categoryId: r.categoryId,
@@ -38,6 +54,9 @@ export class RegionsService {
       latency: r.latency,
       services: r.services ? r.services.map((s: any) => s.name) : [],
       benefits: r.benefits ? r.benefits.map((b: any) => b.description) : [],
+      aiCapabilities: r.aiCapabilities ? r.aiCapabilities.map((a: any) => a.capability) : [],
+      topServices: r.topServices ? r.topServices.map((t: any) => t.name) : [],
+      workloads: r.workloads ? r.workloads.map((w: any) => w.description) : [],
       createdAt: r.createdAt.toISOString(),
       updatedAt: r.updatedAt.toISOString(),
     };
@@ -64,10 +83,14 @@ export class RegionsService {
         category: true,
         services: true,
         benefits: true,
+        aiCapabilities: true,
+        topServices: true,
+        workloads: true,
       },
-      orderBy: {
-        awsRegionCode: "asc",
-      },
+      orderBy: [
+        { category: { displayOrder: "asc" } },
+        { displayOrder: "asc" }
+      ],
     };
 
     if (page !== undefined && limit !== undefined) {
@@ -88,6 +111,9 @@ export class RegionsService {
         category: true,
         services: true,
         benefits: true,
+        aiCapabilities: true,
+        topServices: true,
+        workloads: true,
       },
     });
 
@@ -107,6 +133,9 @@ export class RegionsService {
         category: true,
         services: true,
         benefits: true,
+        aiCapabilities: true,
+        topServices: true,
+        workloads: true,
       },
     });
 
@@ -118,7 +147,7 @@ export class RegionsService {
   }
 
   async create(data: CreateRegionRequest) {
-    const { services = [], benefits = [], ...regionData } = data;
+    const { services = [], benefits = [], aiCapabilities = [], topServices = [], workloads = [], ...regionData } = data;
 
     return prisma.$transaction(async (tx) => {
       const region = await tx.region.create({
@@ -127,6 +156,8 @@ export class RegionsService {
           name: regionData.name,
           regionCode: regionData.regionCode,
           flag: regionData.flag,
+          flagUrl: regionData.flagUrl || null,
+          displayOrder: Number(regionData.displayOrder) || 0,
           latitude: regionData.latitude,
           longitude: regionData.longitude,
           categoryId: regionData.categoryId,
@@ -160,12 +191,33 @@ export class RegionsService {
         });
       }
 
+      if (aiCapabilities.length > 0) {
+        await tx.regionAiCapability.createMany({
+          data: aiCapabilities.map((capability) => ({ capability, regionId: region.id })),
+        });
+      }
+
+      if (topServices.length > 0) {
+        await tx.regionTopService.createMany({
+          data: topServices.map((name) => ({ name, regionId: region.id })),
+        });
+      }
+
+      if (workloads.length > 0) {
+        await tx.regionWorkload.createMany({
+          data: workloads.map((description) => ({ description, regionId: region.id })),
+        });
+      }
+
       const completeRegion = await tx.region.findUnique({
         where: { id: region.id },
         include: {
           category: true,
           services: true,
           benefits: true,
+          aiCapabilities: true,
+          topServices: true,
+          workloads: true,
         },
       });
 
@@ -174,9 +226,17 @@ export class RegionsService {
   }
 
   async update(id: string, data: UpdateRegionRequest) {
-    const { services, benefits, ...regionData } = data;
+    const { services, benefits, aiCapabilities, topServices, workloads, ...regionData } = data;
 
     return prisma.$transaction(async (tx) => {
+      const existing = await tx.region.findUnique({
+        where: { id },
+        select: { flagUrl: true }
+      });
+      if (existing && regionData.flagUrl !== undefined && existing.flagUrl !== regionData.flagUrl) {
+        deleteFlagFile(existing.flagUrl);
+      }
+
       const updatePayload: any = {
         updatedBy: "system-admin",
       };
@@ -185,6 +245,8 @@ export class RegionsService {
       if (regionData.name !== undefined) updatePayload.name = regionData.name;
       if (regionData.regionCode !== undefined) updatePayload.regionCode = regionData.regionCode;
       if (regionData.flag !== undefined) updatePayload.flag = regionData.flag;
+      if (regionData.flagUrl !== undefined) updatePayload.flagUrl = regionData.flagUrl;
+      if (regionData.displayOrder !== undefined) updatePayload.displayOrder = Number(regionData.displayOrder);
       if (regionData.latitude !== undefined) updatePayload.latitude = Number(regionData.latitude);
       if (regionData.longitude !== undefined) updatePayload.longitude = Number(regionData.longitude);
       if (regionData.categoryId !== undefined) updatePayload.categoryId = regionData.categoryId;
@@ -229,12 +291,48 @@ export class RegionsService {
         }
       }
 
+      if (aiCapabilities !== undefined) {
+        await tx.regionAiCapability.deleteMany({
+          where: { regionId: id },
+        });
+        if (aiCapabilities.length > 0) {
+          await tx.regionAiCapability.createMany({
+            data: aiCapabilities.map((capability) => ({ capability, regionId: id })),
+          });
+        }
+      }
+
+      if (topServices !== undefined) {
+        await tx.regionTopService.deleteMany({
+          where: { regionId: id },
+        });
+        if (topServices.length > 0) {
+          await tx.regionTopService.createMany({
+            data: topServices.map((name) => ({ name, regionId: id })),
+          });
+        }
+      }
+
+      if (workloads !== undefined) {
+        await tx.regionWorkload.deleteMany({
+          where: { regionId: id },
+        });
+        if (workloads.length > 0) {
+          await tx.regionWorkload.createMany({
+            data: workloads.map((description) => ({ description, regionId: id })),
+          });
+        }
+      }
+
       const completeRegion = await tx.region.findUnique({
         where: { id },
         include: {
           category: true,
           services: true,
           benefits: true,
+          aiCapabilities: true,
+          topServices: true,
+          workloads: true,
         },
       });
 

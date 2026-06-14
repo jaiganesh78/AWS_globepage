@@ -7,6 +7,7 @@ import {
   Network, ArrowUpRight, CheckCircle2, Shield, MapPin, Calendar, HelpCircle
 } from 'lucide-react';
 import { AWSRegionData } from '@/lib/api';
+import FlagImage from '../Layout/FlagImage';
 
 interface IntelligenceDashboardProps {
   region: AWSRegionData;
@@ -186,8 +187,8 @@ export default function IntelligenceDashboard({ region, onBack }: IntelligenceDa
       {/* COMPACT FIXED NAV BAR */}
       <nav className="w-full h-20 px-12 flex items-center justify-between border-b border-slate-100 bg-white/70 backdrop-blur-xl fixed top-0 left-0 z-50 shadow-sm shadow-slate-100/10">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-white rounded-xl border border-slate-200/80 flex items-center justify-center text-slate-800 shadow-sm text-lg backdrop-blur-md">
-            {region.flag}
+          <div className="w-10 h-10 bg-white rounded-xl border border-slate-200/80 flex items-center justify-center text-slate-800 shadow-sm backdrop-blur-md overflow-hidden">
+            <FlagImage flag={region.flagUrl || region.flag} name={region.name} className="w-6 h-4.5 object-contain" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -226,8 +227,8 @@ export default function IntelligenceDashboard({ region, onBack }: IntelligenceDa
             className="flex flex-col items-center text-center mt-2"
           >
             {/* Small Badge */}
-            <div className="w-12 h-12 bg-white rounded-2xl border border-slate-200/80 flex items-center justify-center mb-2 shadow-sm backdrop-blur-xl">
-              <span className="text-xl select-none">{region.flag}</span>
+            <div className="w-12 h-12 bg-white rounded-2xl border border-slate-200/80 flex items-center justify-center mb-2 shadow-sm backdrop-blur-xl overflow-hidden">
+              <FlagImage flag={region.flagUrl || region.flag} name={region.name} className="w-7 h-5 object-contain" />
             </div>
 
             {/* Region Title */}
@@ -325,15 +326,33 @@ export default function IntelligenceDashboard({ region, onBack }: IntelligenceDa
                 <div className="flex flex-col gap-2.5">
                   <div className="flex flex-col gap-1">
                     <span className="text-[9px] text-[#0073BB] font-black uppercase tracking-wider">AI Capabilities</span>
-                    <p className="text-[11px] text-slate-700 leading-normal">
-                      Includes advanced model orchestration (SageMaker, Bedrock, GPU instances) to launch cognitive MVP applications.
-                    </p>
+                    {region.aiCapabilities && region.aiCapabilities.length > 0 ? (
+                      <p className="text-[11px] text-slate-700 leading-normal">
+                        {region.aiCapabilities.join(", ")}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-slate-400 italic">No AI capabilities registered.</p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-1">
-                    <span className="text-[9px] text-[#0073BB] font-black uppercase tracking-wider">Top Services & Workloads</span>
-                    <p className="text-[11px] text-slate-600 leading-normal font-bold">
-                      EKS clusters, Aurora Serverless DB, high-density analytics grids, POPIA/GDPR data ingestion nodes.
-                    </p>
+                    <span className="text-[9px] text-[#0073BB] font-black uppercase tracking-wider block mb-0.5">Top Services</span>
+                    {region.topServices && region.topServices.length > 0 ? (
+                      <p className="text-[11px] text-slate-600 leading-normal font-bold">
+                        {region.topServices.join(", ")}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-slate-400 italic">No top services registered.</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[9px] text-[#0073BB] font-black uppercase tracking-wider block mb-0.5">Workloads</span>
+                    {region.workloads && region.workloads.length > 0 ? (
+                      <p className="text-[11px] text-slate-600 leading-normal">
+                        {region.workloads.join(", ")}
+                      </p>
+                    ) : (
+                      <p className="text-[11px] text-slate-400 italic">No workloads registered.</p>
+                    )}
                   </div>
                 </div>
               }

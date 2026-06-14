@@ -14,11 +14,13 @@ model Category {
   flag         String
   displayOrder Int      @default(0)
   isActive     Boolean  @default(true)
+  isDeleted    Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   regions      Region[]
 
   @@index([displayOrder])
+  @@index([isDeleted])
 }
 
 model Region {
@@ -27,6 +29,8 @@ model Region {
   name                      String
   regionCode                String
   flag                      String
+  flagUrl                   String?
+  displayOrder              Int      @default(0)
   latitude                  Float
   longitude                 Float
   infrastructureDescription String
@@ -48,6 +52,9 @@ model Region {
   category                  Category @relation(fields: [categoryId], references: [id])
   services                  RegionService[]
   benefits                  RegionBenefit[]
+  aiCapabilities            RegionAiCapability[]
+  topServices               RegionTopService[]
+  workloads                 RegionWorkload[]
 
   // Soft deletion
   isDeleted                 Boolean  @default(false)
@@ -69,6 +76,8 @@ model RegionService {
   name     String
   regionId String
   region   Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@unique([regionId, name])
 }
 
 model RegionBenefit {
@@ -76,4 +85,34 @@ model RegionBenefit {
   description String
   regionId    String
   region      Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@unique([regionId, description])
 }
+
+model RegionAiCapability {
+  id         String @id @default(cuid())
+  capability String
+  regionId   String
+  region     Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@unique([regionId, capability])
+}
+
+model RegionTopService {
+  id       String @id @default(cuid())
+  name     String
+  regionId String
+  region   Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@unique([regionId, name])
+}
+
+model RegionWorkload {
+  id          String @id @default(cuid())
+  description String
+  regionId    String
+  region      Region @relation(fields: [regionId], references: [id], onDelete: Cascade)
+
+  @@unique([regionId, description])
+}
+

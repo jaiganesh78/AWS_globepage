@@ -6,17 +6,17 @@ import { useFrame } from '@react-three/fiber';
 import { Sphere } from '@react-three/drei';
 import RegionMarkers from './RegionMarkers';
 import { AWSRegionData } from '@/lib/api';
+import { latLngToXYZ } from '@/utils/coordinates';
 
 interface GlobeProps {
   regions: AWSRegionData[];
   onSelectRegion: (region: AWSRegionData) => void;
   selectedRegion: AWSRegionData | null;
-  setHoveredRegion: (id: string | null) => void;
 }
 
 let cachedTexture: THREE.Texture | null = null;
 
-export default function Globe({ regions, onSelectRegion, selectedRegion, setHoveredRegion }: GlobeProps) {
+export default function Globe({ regions, onSelectRegion, selectedRegion }: GlobeProps) {
   const [texture, setTexture] = useState<THREE.Texture | null>(cachedTexture);
   const globeGroupRef = useRef<THREE.Group>(null);
   const lastLoggedRegionIdRef = useRef<string | null>(null);
@@ -38,11 +38,8 @@ export default function Globe({ regions, onSelectRegion, selectedRegion, setHove
   }, []);
 
   const getTargetRotation = (lat: number, lng: number) => {
-    const phi = (90 - lat) * (Math.PI / 180);
-    const theta = (lng + 180) * (Math.PI / 180);
-    const x = -Math.sin(phi) * Math.cos(theta);
-    const y = Math.cos(phi);
-    const z = Math.sin(phi) * Math.sin(theta);
+    // Generate the Cartesian coordinate using the shared utility at r = 1.0 (unit vector)
+    const [x, y, z] = latLngToXYZ(lat, lng, 1.0);
 
     // Solve YXZ rotation sequence (Ry * Rx) to map P_local to [0, 0, 1] while keeping the globe upright
     const signZ = z >= 0 ? 1 : -1;
@@ -189,7 +186,6 @@ export default function Globe({ regions, onSelectRegion, selectedRegion, setHove
         <RegionMarkers
           regions={regions}
           onSelect={onSelectRegion}
-          onHover={setHoveredRegion}
           selectedId={selectedRegion?.id}
         />
       </group>

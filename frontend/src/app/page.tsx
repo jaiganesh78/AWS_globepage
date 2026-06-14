@@ -9,6 +9,7 @@ import {
 import GlobeScene from '@/components/Globe/GlobeScene';
 import IntelligenceDashboard from '@/components/Intelligence/IntelligenceDashboard';
 import { fetchCategories, fetchRegions, AWSRegionData, CategoryData } from '@/lib/api';
+import FlagImage from '@/components/Layout/FlagImage';
 
 export default function Home() {
   const [regions, setRegions] = useState<AWSRegionData[]>([]);
@@ -76,7 +77,9 @@ export default function Home() {
   const sidebarCategories = useMemo(() => {
     const sortedCats = [...categories].sort((a, b) => a.displayOrder - b.displayOrder);
     return sortedCats.map(cat => {
-      const catRegions = regions.filter(r => r.categoryId === cat.slug);
+      const catRegions = regions
+        .filter(r => r.categoryId === cat.slug)
+        .sort((a, b) => a.displayOrder - b.displayOrder);
       return {
         id: cat.slug,
         name: cat.name,
@@ -214,7 +217,7 @@ export default function Home() {
                             className={`w-full px-5 py-4 rounded-2xl flex items-center justify-between transition-all text-xs font-black uppercase tracking-wider text-left group ${hasActiveChild ? 'bg-[#1A1C1E] text-white shadow-md' : 'hover:bg-slate-100/50 text-slate-600'}`}
                           >
                             <div className="flex items-center gap-3 truncate">
-                              <span className="text-base flex-shrink-0">{cat.flag}</span>
+                              <FlagImage flag={cat.flag} name={cat.name} className="w-5 h-3.5 object-contain flex-shrink-0" />
                               <span className="truncate">{cat.name}</span>
                             </div>
                             <ChevronRight size={12} className={`flex-shrink-0 transition-transform ${isExpanded ? 'rotate-90 text-current' : 'text-slate-400 group-hover:translate-x-1'}`} />
@@ -326,8 +329,8 @@ function RegionBriefModal({ region, onClose, onExplore }: { region: AWSRegionDat
     >
       <div className="p-10 bg-white/95 backdrop-blur-3xl h-full flex flex-col">
         <div className="flex justify-between items-start mb-8">
-          <div className="w-14 h-14 bg-[#1A1C1E] rounded-2xl flex items-center justify-center text-white shadow-xl text-2xl">
-            {region.flag}
+          <div className="w-14 h-14 bg-[#1A1C1E] rounded-2xl flex items-center justify-center text-white shadow-xl overflow-hidden">
+            <FlagImage flag={region.flagUrl || region.flag} name={region.name} className="w-10 h-7.5 object-contain" />
           </div>
           <button onClick={onClose} className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all">✕</button>
         </div>

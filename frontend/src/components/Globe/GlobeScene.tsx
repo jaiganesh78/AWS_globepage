@@ -13,7 +13,6 @@ interface GlobeSceneProps {
 }
 
 export default function GlobeScene({ regions, onSelectRegion, selectedRegion }: GlobeSceneProps) {
-  const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
   const controlsRef = useRef<any>(null);
 
   useEffect(() => {
@@ -60,7 +59,6 @@ export default function GlobeScene({ regions, onSelectRegion, selectedRegion }: 
           regions={regions} 
           onSelectRegion={onSelectRegion} 
           selectedRegion={selectedRegion} 
-          setHoveredRegion={setHoveredRegion} 
         />
 
         <ContactShadows 

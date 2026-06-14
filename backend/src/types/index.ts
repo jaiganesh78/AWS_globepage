@@ -15,6 +15,8 @@ export interface RegionResponse {
   name: string;
   regionCode: string;
   flag: string;
+  flagUrl: string | null;
+  displayOrder: number;
   latitude: number;
   longitude: number;
   categoryId: string;
@@ -34,6 +36,9 @@ export interface RegionResponse {
   latency: string;
   services: string[];
   benefits: string[];
+  aiCapabilities: string[];
+  topServices: string[];
+  workloads: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -43,6 +48,8 @@ export interface CreateRegionRequest {
   name: string;
   regionCode: string;
   flag: string;
+  flagUrl?: string | null;
+  displayOrder?: number;
   latitude: number;
   longitude: number;
   categoryId: string;
@@ -61,6 +68,9 @@ export interface CreateRegionRequest {
   latency?: string;
   services?: string[];
   benefits?: string[];
+  aiCapabilities?: string[];
+  topServices?: string[];
+  workloads?: string[];
 }
 
 export interface UpdateRegionRequest {
@@ -68,6 +78,8 @@ export interface UpdateRegionRequest {
   name?: string;
   regionCode?: string;
   flag?: string;
+  flagUrl?: string | null;
+  displayOrder?: number;
   latitude?: number;
   longitude?: number;
   categoryId?: string;
@@ -86,4 +98,8 @@ export interface UpdateRegionRequest {
   latency?: string;
   services?: string[];
   benefits?: string[];
+  aiCapabilities?: string[];
+  topServices?: string[];
+  workloads?: string[];
 }
+
