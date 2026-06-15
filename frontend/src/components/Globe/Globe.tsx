@@ -128,7 +128,7 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
 
         // Gentle auto-spin
         globeGroupRef.current.rotation.y += delta * 0.04;
-        
+
         // Return pitch (X-axis) back to 0
         let diffX = 0 - globeGroupRef.current.rotation.x;
         diffX = Math.atan2(Math.sin(diffX), Math.cos(diffX));
@@ -145,9 +145,9 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
   });
 
   return (
-    <group 
-      ref={globeGroupRef} 
-      scale={1.5} 
+    <group
+      ref={globeGroupRef}
+      scale={1.5}
       rotation={new THREE.Euler(0, -1.3962634, 0, 'XYZ')}
     >
       {/* Ocean Base Sphere — renders first */}
@@ -160,9 +160,9 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
 
       {/* Landmass Sphere — renders second */}
       {texture && (
-        <Sphere 
-          args={[1.0, 64, 64]} 
-          renderOrder={1} 
+        <Sphere
+          args={[1.0, 64, 64]}
+          renderOrder={1}
           rotation={[0, 0, 0]}
         >
           <meshBasicMaterial

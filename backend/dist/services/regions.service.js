@@ -53,6 +53,9 @@ export class RegionsService {
             latency: r.latency,
             services: r.services ? r.services.map((s) => s.name) : [],
             benefits: r.benefits ? r.benefits.map((b) => b.description) : [],
+            aiCapabilities: r.aiCapabilities ? r.aiCapabilities.map((a) => a.capability) : [],
+            topServices: r.topServices ? r.topServices.map((t) => t.name) : [],
+            workloads: r.workloads ? r.workloads.map((w) => w.description) : [],
             createdAt: r.createdAt.toISOString(),
             updatedAt: r.updatedAt.toISOString(),
         };
@@ -75,6 +78,9 @@ export class RegionsService {
                 category: true,
                 services: true,
                 benefits: true,
+                aiCapabilities: true,
+                topServices: true,
+                workloads: true,
             },
             orderBy: [
                 { category: { displayOrder: "asc" } },
@@ -97,6 +103,9 @@ export class RegionsService {
                 category: true,
                 services: true,
                 benefits: true,
+                aiCapabilities: true,
+                topServices: true,
+                workloads: true,
             },
         });
         if (!region || region.isDeleted) {
@@ -113,6 +122,9 @@ export class RegionsService {
                 category: true,
                 services: true,
                 benefits: true,
+                aiCapabilities: true,
+                topServices: true,
+                workloads: true,
             },
         });
         if (!region || region.isDeleted) {
@@ -121,7 +133,7 @@ export class RegionsService {
         return this.mapRegion(region);
     }
     async create(data) {
-        const { services = [], benefits = [], ...regionData } = data;
+        const { services = [], benefits = [], aiCapabilities = [], topServices = [], workloads = [], ...regionData } = data;
         return prisma.$transaction(async (tx) => {
             const region = await tx.region.create({
                 data: {
@@ -161,19 +173,37 @@ export class RegionsService {
                     data: benefits.map((description) => ({ description, regionId: region.id })),
                 });
             }
+            if (aiCapabilities.length > 0) {
+                await tx.regionAiCapability.createMany({
+                    data: aiCapabilities.map((capability) => ({ capability, regionId: region.id })),
+                });
+            }
+            if (topServices.length > 0) {
+                await tx.regionTopService.createMany({
+                    data: topServices.map((name) => ({ name, regionId: region.id })),
+                });
+            }
+            if (workloads.length > 0) {
+                await tx.regionWorkload.createMany({
+                    data: workloads.map((description) => ({ description, regionId: region.id })),
+                });
+            }
             const completeRegion = await tx.region.findUnique({
                 where: { id: region.id },
                 include: {
                     category: true,
                     services: true,
                     benefits: true,
+                    aiCapabilities: true,
+                    topServices: true,
+                    workloads: true,
                 },
             });
             return this.mapRegion(completeRegion);
         });
     }
     async update(id, data) {
-        const { services, benefits, ...regionData } = data;
+        const { services, benefits, aiCapabilities, topServices, workloads, ...regionData } = data;
         return prisma.$transaction(async (tx) => {
             const existing = await tx.region.findUnique({
                 where: { id },
@@ -253,12 +283,45 @@ export class RegionsService {
                     });
                 }
             }
+            if (aiCapabilities !== undefined) {
+                await tx.regionAiCapability.deleteMany({
+                    where: { regionId: id },
+                });
+                if (aiCapabilities.length > 0) {
+                    await tx.regionAiCapability.createMany({
+                        data: aiCapabilities.map((capability) => ({ capability, regionId: id })),
+                    });
+                }
+            }
+            if (topServices !== undefined) {
+                await tx.regionTopService.deleteMany({
+                    where: { regionId: id },
+                });
+                if (topServices.length > 0) {
+                    await tx.regionTopService.createMany({
+                        data: topServices.map((name) => ({ name, regionId: id })),
+                    });
+                }
+            }
+            if (workloads !== undefined) {
+                await tx.regionWorkload.deleteMany({
+                    where: { regionId: id },
+                });
+                if (workloads.length > 0) {
+                    await tx.regionWorkload.createMany({
+                        data: workloads.map((description) => ({ description, regionId: id })),
+                    });
+                }
+            }
             const completeRegion = await tx.region.findUnique({
                 where: { id },
                 include: {
                     category: true,
                     services: true,
                     benefits: true,
+                    aiCapabilities: true,
+                    topServices: true,
+                    workloads: true,
                 },
             });
             return this.mapRegion(completeRegion);

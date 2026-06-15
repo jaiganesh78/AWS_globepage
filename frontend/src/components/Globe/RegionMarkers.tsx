@@ -50,14 +50,14 @@ function Dot({
   const haloRef = useRef<THREE.Mesh>(null);
   const selectedWireframeRef = useRef<THREE.Mesh>(null);
 
-  // AWS Premium Theme Colors (Neon Electric Blue / Cyan theme)
+  // AWS Brand Orange Theme Colors
   const coreColor = isSelected 
-    ? '#0073BB' // Selected Electric Blue
-    : (hovered ? '#00F0FF' : '#00E5FF'); // Hover Bright Cyan / Idle Cyan
+    ? '#FFC766' // Selected
+    : (hovered ? '#FFB84D' : '#FF9900'); // Hover / Idle
 
   const haloColor = isSelected 
-    ? '#00E5FF' 
-    : (hovered ? '#00E5FF' : '#0073BB');
+    ? '#FFC766' 
+    : (hovered ? '#FFB84D' : '#FF9900');
 
   const opacity = isDimmed ? 0.35 : 1.0;
   const coreRadius = isSelected 
@@ -146,7 +146,7 @@ function Dot({
         >
           <sphereGeometry args={[0.045, 12, 12]} />
           <meshBasicMaterial
-            color="#00E5FF"
+            color="#FF9900"
             transparent
             opacity={0.25}
             wireframe={true}
@@ -180,7 +180,7 @@ function Dot({
               exit={{ opacity: 0, scale: 0.8, y: 5 }}
               transition={{ duration: 0.2 }}
               style={{ fontSize: '10px' }}
-              className="px-3 py-1.5 bg-[#0073BB] text-white rounded-xl shadow-[0_10px_30px_rgba(0,163,255,0.3)] border border-[#00A3FF]/30 whitespace-nowrap font-black uppercase tracking-wider flex items-center gap-2"
+              className="px-3 py-1.5 bg-[#FF9900] text-white rounded-xl shadow-[0_10px_30px_rgba(255,153,0,0.3)] border border-[#FF9900]/30 whitespace-nowrap font-black uppercase tracking-wider flex items-center gap-2"
             >
               <FlagImage flag={item.flagUrl || item.flag} name={item.name} className="w-5 h-3.5 object-contain" />
               <span className="font-extrabold">{item.name}</span>

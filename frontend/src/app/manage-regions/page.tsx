@@ -6,11 +6,14 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   fetchCategories, fetchRegions, createRegion, updateRegion, deleteRegion,
-  AWSRegionData, CategoryData 
+  fetchServices, fetchServiceCategories, fetchServiceDetails, createService, updateService, deleteService,
+  AWSRegionData, CategoryData, AWSServiceSummary, AWSServiceCategory
 } from '@/lib/api';
 import RegionTable from '@/components/RegionManagement/RegionTable';
 import RegionForm from '@/components/RegionManagement/RegionForm';
 import GlobeScene from '@/components/Globe/GlobeScene';
+import ServiceTable from '@/components/ServiceManagement/ServiceTable';
+import ServiceForm from '@/components/ServiceManagement/ServiceForm';
 
 interface ToastState {
   message: string;
@@ -23,13 +26,28 @@ export default function ManageRegionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
+  // Dashboard view tab
+  const [activeTab, setActiveTab] = useState<'regions' | 'services'>('regions');
+
+  // Services list states
+  const [services, setServices] = useState<AWSServiceSummary[]>([]);
+  const [serviceCategories, setServiceCategories] = useState<AWSServiceCategory[]>([]);
+
   // Form modal states
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingRegion, setEditingRegion] = useState<AWSRegionData | null>(null);
   
+  // Service form states
+  const [isServiceFormOpen, setIsServiceFormOpen] = useState(false);
+  const [editingService, setEditingService] = useState<any | null>(null);
+  
   // Delete confirm states
   const [deletingRegion, setDeletingRegion] = useState<AWSRegionData | null>(null);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+
+  // Service delete states
+  const [deletingService, setDeletingService] = useState<AWSServiceSummary | null>(null);
+  const [isServiceDeleteConfirmOpen, setIsServiceDeleteConfirmOpen] = useState(false);
   
   // Toast notifications
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -79,12 +97,16 @@ export default function ManageRegionsPage() {
     try {
       setLoading(true);
       setError(null);
-      const [catsData, regsData] = await Promise.all([
+      const [catsData, regsData, servicesData, serviceCatsData] = await Promise.all([
         fetchCategories(),
-        fetchRegions()
+        fetchRegions(),
+        fetchServices(),
+        fetchServiceCategories()
       ]);
       setCategories(catsData);
       setRegions(regsData);
+      setServices(servicesData);
+      setServiceCategories(serviceCatsData);
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Failed to load database items.");
@@ -149,6 +171,80 @@ export default function ManageRegionsPage() {
     }
   };
 
+  // Service Add Trigger
+  const handleServiceAddClick = () => {
+    setEditingService(null);
+    setIsServiceFormOpen(true);
+  };
+
+  // Service Edit Trigger
+  const handleServiceEditClick = async (service: AWSServiceSummary) => {
+    try {
+      setLoading(true);
+      const details = await fetchServiceDetails(service.id);
+      setEditingService(details);
+      setIsServiceFormOpen(true);
+    } catch (err: any) {
+      showToast(`Failed to load service details: ${err.message}`, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Service Clone Trigger
+  const handleServiceCloneClick = async (service: AWSServiceSummary) => {
+    try {
+      setLoading(true);
+      const details = await fetchServiceDetails(service.id);
+      const cloned = {
+        ...details,
+        id: undefined, // Reset identifier
+        serviceCode: `${details.serviceCode}-copy`,
+        name: `${details.name} (Copy)`,
+        slug: `${details.slug}-copy`
+      };
+      setEditingService(cloned);
+      setIsServiceFormOpen(true);
+    } catch (err: any) {
+      showToast(`Failed to clone service: ${err.message}`, "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Service Form Submission
+  const handleServiceFormSubmit = async (payload: any) => {
+    if (editingService && editingService.id) {
+      await updateService(editingService.id, payload);
+      showToast("AWS Service updated successfully", "success");
+    } else {
+      await createService(payload);
+      showToast("New AWS Service created successfully", "success");
+    }
+    setIsServiceFormOpen(false);
+    loadData();
+  };
+
+  // Service Delete Triggers
+  const handleServiceDeleteClick = (service: AWSServiceSummary) => {
+    setDeletingService(service);
+    setIsServiceDeleteConfirmOpen(true);
+  };
+
+  const confirmServiceDelete = async () => {
+    if (!deletingService) return;
+    try {
+      await deleteService(deletingService.id);
+      showToast(`AWS Service ${deletingService.name} archived successfully`, "success");
+      setIsServiceDeleteConfirmOpen(false);
+      setDeletingService(null);
+      loadData();
+    } catch (err: any) {
+      console.error(err);
+      showToast(err.message || "Failed to delete service", "error");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-[#1A1C1E] font-jakarta pb-16 relative overflow-x-hidden">
       
@@ -207,19 +303,61 @@ export default function ManageRegionsPage() {
       {/* DASHBOARD CONTENT CONTAINER */}
       <main className="max-w-[1280px] mx-auto px-8 pt-12 relative z-10">
         
+        {/* TABS SELECTOR SWITCH */}
+        <div className="flex border-b border-slate-200 mb-8 select-none">
+          <button
+            onClick={() => setActiveTab('regions')}
+            className={`px-8 py-4 text-xs font-black uppercase tracking-wider border-b-2 transition-colors ${
+              activeTab === 'regions'
+                ? 'border-[#0073BB] text-[#0073BB]'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            Presence Regions
+          </button>
+          <button
+            onClick={() => setActiveTab('services')}
+            className={`px-8 py-4 text-xs font-black uppercase tracking-wider border-b-2 transition-colors ${
+              activeTab === 'services'
+                ? 'border-[#FF9900] text-[#FF9900]'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            AWS Services Catalog
+          </button>
+        </div>
+
         {/* HEADER SECTION */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
-          <div>
-            <h1 className="text-4xl font-black text-[#1A1C1E] tracking-tight">Active Region Nodes</h1>
-            <p className="text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase mt-2">Create, modify, and delete AWS presence mesh nodes</p>
-          </div>
+          {activeTab === 'regions' ? (
+            <>
+              <div>
+                <h1 className="text-4xl font-black text-[#1A1C1E] tracking-tight">Active Region Nodes</h1>
+                <p className="text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase mt-2">Create, modify, and delete AWS presence mesh nodes</p>
+              </div>
 
-          <button
-            onClick={handleAddClick}
-            className="px-8 py-4 bg-[#1A1C1E] hover:bg-[#0073BB] text-white rounded-2xl font-black uppercase text-[11px] tracking-widest flex items-center gap-2 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-          >
-            <Plus size={16} /> Add Presence Node
-          </button>
+              <button
+                onClick={handleAddClick}
+                className="px-8 py-4 bg-[#1A1C1E] hover:bg-[#0073BB] text-white rounded-2xl font-black uppercase text-[11px] tracking-widest flex items-center gap-2 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              >
+                <Plus size={16} /> Add Presence Node
+              </button>
+            </>
+          ) : (
+            <>
+              <div>
+                <h1 className="text-4xl font-black text-[#1A1C1E] tracking-tight">AWS Services Catalog</h1>
+                <p className="text-slate-400 text-[10px] font-black tracking-[0.3em] uppercase mt-2">Manage AWS global service catalog offerings</p>
+              </div>
+
+              <button
+                onClick={handleServiceAddClick}
+                className="px-8 py-4 bg-[#1A1C1E] hover:bg-[#FF9900] text-white rounded-2xl font-black uppercase text-[11px] tracking-widest flex items-center gap-2 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              >
+                <Plus size={16} /> Add AWS Service
+              </button>
+            </>
+          )}
         </div>
 
         {/* LOADING / ERROR STATES */}
@@ -246,21 +384,46 @@ export default function ManageRegionsPage() {
           </div>
         )}
 
-        {/* REGIONS GRID LIST */}
-        {!loading && !error && regions.length === 0 && (
-          <div className="py-24 text-center bg-white border border-slate-100 rounded-[2.5rem] shadow-sm">
-            <Shield size={48} className="text-slate-200 mx-auto mb-6" />
-            <h3 className="text-slate-950 font-black text-xl">Database Empty</h3>
-            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-2">No active presence nodes in this partition mesh</p>
-          </div>
-        )}
+        {/* REGIONS OR SERVICES LIST VIEW */}
+        {activeTab === 'regions' ? (
+          <>
+            {!loading && !error && regions.length === 0 && (
+              <div className="py-24 text-center bg-white border border-slate-100 rounded-[2.5rem] shadow-sm">
+                <Shield size={48} className="text-slate-200 mx-auto mb-6" />
+                <h3 className="text-slate-950 font-black text-xl">Database Empty</h3>
+                <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-2">No active presence nodes in this partition mesh</p>
+              </div>
+            )}
 
-        {!loading && !error && regions.length > 0 && (
-          <RegionTable 
-            regions={regions} 
-            onEditClick={handleEditClick} 
-            onDeleteClick={handleDeleteClick} 
-          />
+            {!loading && !error && regions.length > 0 && (
+              <RegionTable 
+                regions={regions} 
+                onEditClick={handleEditClick} 
+                onDeleteClick={handleDeleteClick} 
+              />
+            )}
+          </>
+        ) : (
+          <>
+            {!loading && !error && services.length === 0 && (
+              <div className="py-24 text-center bg-white border border-slate-100 rounded-[2.5rem] shadow-sm">
+                <Shield size={48} className="text-slate-200 mx-auto mb-6" />
+                <h3 className="text-slate-950 font-black text-xl">Catalog Empty</h3>
+                <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mt-2">No active AWS services in this catalog partition</p>
+              </div>
+            )}
+
+            {!loading && !error && services.length > 0 && (
+              <ServiceTable 
+                services={services} 
+                onEditClick={handleServiceEditClick}
+                onCloneClick={handleServiceCloneClick}
+                onDeleteClick={handleServiceDeleteClick}
+                onRefresh={loadData}
+                showToast={showToast}
+              />
+            )}
+          </>
         )}
       </main>
 
@@ -434,6 +597,96 @@ export default function ManageRegionsPage() {
               >
                 Close Location Verification
               </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* SERVICE DRAWER FORM */}
+      <AnimatePresence>
+        {isServiceFormOpen && (
+          <div className="fixed inset-0 z-50 flex justify-end">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsServiceFormOpen(false)}
+              className="absolute inset-0 bg-slate-950/20 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="relative w-full max-w-2xl bg-white h-screen shadow-2xl flex flex-col z-10 border-l border-slate-100 overflow-hidden"
+            >
+              <div className="px-10 py-8 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+                    {editingService && editingService.id ? `Edit ${editingService.serviceCode} Offering` : 'Register AWS Service'}
+                  </h3>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Configure database service parameters</p>
+                </div>
+                <button 
+                  onClick={() => setIsServiceFormOpen(false)}
+                  className="p-2 rounded-xl hover:bg-slate-50 text-slate-400 hover:text-slate-950 transition-all"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <ServiceForm 
+                categories={serviceCategories}
+                editingService={editingService}
+                onSubmit={handleServiceFormSubmit}
+                onCancel={() => setIsServiceFormOpen(false)}
+                allServices={services}
+                showToast={showToast}
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* SERVICE DELETE CONFIRM MODAL */}
+      <AnimatePresence>
+        {isServiceDeleteConfirmOpen && deletingService && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsServiceDeleteConfirmOpen(false)}
+              className="absolute inset-0 bg-slate-950/20 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-white border border-slate-100 rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl z-10 flex flex-col items-center text-center"
+            >
+              <div className="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6 border border-red-100 animate-pulse">
+                <Trash2 size={24} />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-2">Decommission Service</h3>
+              <p className="text-slate-500 text-xs font-bold leading-relaxed mb-8 uppercase tracking-wider">
+                Are you sure you want to decommission service <span className="text-slate-950 font-black">{deletingService.name}</span>?<br />
+                This will hide the service from catalog views but preserve database integrity.
+              </p>
+              <div className="flex items-center gap-3 w-full">
+                <button
+                  onClick={() => setIsServiceDeleteConfirmOpen(false)}
+                  className="flex-1 py-4 border border-slate-200 text-slate-500 hover:text-slate-900 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmServiceDelete}
+                  className="flex-1 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all shadow-lg shadow-red-200"
+                >
+                  Confirm Delete
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

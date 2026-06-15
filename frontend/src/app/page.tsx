@@ -10,6 +10,7 @@ import GlobeScene from '@/components/Globe/GlobeScene';
 import IntelligenceDashboard from '@/components/Intelligence/IntelligenceDashboard';
 import { fetchCategories, fetchRegions, AWSRegionData, CategoryData } from '@/lib/api';
 import FlagImage from '@/components/Layout/FlagImage';
+import ServicesCatalog from '@/components/Services/ServicesCatalog';
 
 export default function Home() {
   const [regions, setRegions] = useState<AWSRegionData[]>([]);
@@ -145,7 +146,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F8F9FA] text-[#1A1C1E] flex flex-col font-jakarta relative overflow-hidden">
+    <main className={`min-h-screen bg-[#F8F9FA] text-[#1A1C1E] flex flex-col font-jakarta relative ${showIntelligence ? 'overflow-hidden h-screen' : 'overflow-y-auto premium-scrollbar scroll-smooth'}`}>
 
       <AnimatePresence mode="wait">
         {!showIntelligence ? (
@@ -156,8 +157,10 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 1.05, filter: 'blur(15px)' }}
             transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-            className="h-screen w-full relative overflow-hidden flex flex-col bg-[#F8F9FA]"
+            className="w-full relative flex flex-col bg-[#F8F9FA]"
           >
+            {/* 3D Globe View viewport (takes exactly 100vh) */}
+            <div className="h-screen w-full relative overflow-hidden flex flex-col flex-shrink-0">
             {/* Background Gradient */}
             <div className="absolute inset-0 z-0 pointer-events-none">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(190,227,237,0.15)_0%,transparent_60%)]" />
@@ -292,7 +295,27 @@ export default function Home() {
                 />
               )}
             </AnimatePresence>
-          </motion.section>
+
+            {/* Scroll Down Floating Indicator */}
+            <div
+              className="absolute bottom-10 right-10 z-20 animate-bounce cursor-pointer pointer-events-auto bg-white/95 backdrop-blur-md p-4 rounded-full border border-slate-100 shadow-xl flex items-center justify-center hover:bg-slate-50 transition-colors"
+              onClick={() => {
+                const catalogEl = document.getElementById("services-catalog-anchor");
+                if (catalogEl) {
+                  catalogEl.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              title="Scroll down to AWS Services Catalog"
+            >
+              <ArrowDown size={18} className="text-[#FF9900]" />
+            </div>
+          </div>
+
+          {/* Catalog wrapper stacked below the globe scene */}
+          <div id="services-catalog-anchor" className="w-full">
+            <ServicesCatalog />
+          </div>
+        </motion.section>
         ) : (
           /* SECTION 2: INTELLIGENCE HUB (DETAILS VIEW) */
           <motion.div

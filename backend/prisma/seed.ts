@@ -1,4 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+import { seedCategories } from "./seed-categories.js";
+import { seedServicesPart1 } from "./seed-services-part1.js";
+import { seedServicesPart2 } from "./seed-services-part2.js";
+import { seedServicesPart3 } from "./seed-services-part3.js";
+import { seedServicesPart4 } from "./seed-services-part4.js";
+import { seedServicesPart5 } from "./seed-services-part5.js";
+import { importAwsIcons } from "../scripts/importAwsIcons.js";
 
 const prisma = new PrismaClient();
 
@@ -619,6 +626,8 @@ const regionalSpecs: Record<string, any> = {
 
 async function main() {
   console.log("Purging existing database tables...");
+  await prisma.aWSService.deleteMany({});
+  await prisma.aWSServiceCategory.deleteMany({});
   await prisma.regionWorkload.deleteMany({});
   await prisma.regionTopService.deleteMany({});
   await prisma.regionAiCapability.deleteMany({});
@@ -744,6 +753,62 @@ async function main() {
       });
     }
   }
+
+  console.log("Seeding AWS Service Categories...");
+  const awsCategoriesMap: Record<string, any> = {};
+  for (const cat of seedCategories) {
+    const created = await prisma.aWSServiceCategory.create({
+      data: {
+        name: cat.name,
+        slug: cat.slug,
+        description: cat.description,
+        displayOrder: cat.displayOrder,
+      }
+    });
+    awsCategoriesMap[cat.slug] = created;
+  }
+
+  const allSeedServices = [
+    ...seedServicesPart1,
+    ...seedServicesPart2,
+    ...seedServicesPart3,
+    ...seedServicesPart4,
+    ...seedServicesPart5
+  ];
+
+  console.log(`Seeding ${allSeedServices.length} AWS Services...`);
+  for (const s of allSeedServices) {
+    const category = awsCategoriesMap[s.categorySlug];
+    if (!category) {
+      console.warn(`Category slug '${s.categorySlug}' not found for service '${s.serviceCode}'. Skipping.`);
+      continue;
+    }
+    await prisma.aWSService.create({
+      data: {
+        serviceCode: s.serviceCode,
+        name: s.name,
+        slug: s.slug,
+        categoryId: category.id,
+        shortDescription: s.shortDescription,
+        fullDescription: s.fullDescription,
+        characteristics: s.characteristics,
+        features: s.features,
+        useCases: s.useCases,
+        pricingModels: s.pricingModels,
+        relatedServices: s.relatedServices as any, // Json
+        iconUrl: `/uploads/services/${s.slug}.svg`,
+        keywords: s.keywords,
+        awsDocumentationUrl: s.awsDocumentationUrl,
+        isFeatured: s.isFeatured ?? false,
+        status: s.status ?? "GA",
+        comparisonTags: s.comparisonTags,
+        displayOrder: s.displayOrder
+      }
+    });
+  }
+
+  console.log("Running icon importer...");
+  await importAwsIcons(allSeedServices);
 
   console.log("Database seeded successfully!");
 }

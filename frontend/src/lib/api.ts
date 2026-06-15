@@ -197,3 +197,171 @@ export async function uploadFlag(file: File): Promise<{ url: string }> {
   }
   return res.json();
 }
+
+// ==========================================
+// AWS SERVICES CATALOG TYPES AND API METHODS
+// ==========================================
+
+export interface AWSServiceCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  iconUrl: string | null;
+  displayOrder: number;
+}
+
+export interface AWSServiceSummary {
+  id: string;
+  serviceCode: string;
+  name: string;
+  slug: string;
+  categoryId: string;
+  iconUrl: string;
+  shortDescription: string;
+  isFeatured: boolean;
+  status: string; // "GA" | "Preview" | "Beta" | "Deprecated" | "Retired"
+  displayOrder: number;
+  isActive: boolean;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+}
+
+export interface AWSServiceDetails extends AWSServiceSummary {
+  fullDescription: string;
+  characteristics: string[];
+  features: string[];
+  useCases: string[];
+  pricingModels: string[];
+  relatedServices: { name: string; slug: string }[];
+  keywords: string[];
+  awsDocumentationUrl: string | null;
+  comparisonTags: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function fetchServiceCategories(): Promise<AWSServiceCategory[]> {
+  const res = await fetch(`${API_URL}/api/services/categories`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch service categories");
+  }
+  const json = await res.json();
+  return json.data;
+}
+
+export async function fetchServices(filters: {
+  search?: string;
+  categoryId?: string;
+  isFeatured?: boolean;
+  status?: string;
+  isActive?: boolean;
+} = {}): Promise<AWSServiceSummary[]> {
+  const params = new URLSearchParams();
+  if (filters.search) params.append("search", filters.search);
+  if (filters.categoryId) params.append("categoryId", filters.categoryId);
+  if (filters.isFeatured !== undefined) params.append("isFeatured", String(filters.isFeatured));
+  if (filters.status) params.append("status", filters.status);
+  if (filters.isActive !== undefined) params.append("isActive", String(filters.isActive));
+
+  const url = `${API_URL}/api/services?${params.toString()}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error("Failed to fetch AWS services");
+  }
+  const json = await res.json();
+  return json.data;
+}
+
+export async function fetchServiceDetails(id: string): Promise<AWSServiceDetails> {
+  const res = await fetch(`${API_URL}/api/services/${id}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch details for service ${id}`);
+  }
+  const json = await res.json();
+  return json.data;
+}
+
+export async function createService(data: any): Promise<AWSServiceDetails> {
+  const res = await fetch(`${API_URL}/api/services`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to create AWS service");
+  }
+  const json = await res.json();
+  return json.data;
+}
+
+export async function updateService(id: string, data: any): Promise<AWSServiceDetails> {
+  const res = await fetch(`${API_URL}/api/services/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to update AWS service");
+  }
+  const json = await res.json();
+  return json.data;
+}
+
+export async function deleteService(id: string): Promise<void> {
+  const res = await fetch(`${API_URL}/api/services/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to delete AWS service");
+  }
+}
+
+export async function uploadServiceIcon(file: File): Promise<{ url: string }> {
+  const formData = new FormData();
+  formData.append("icon", file);
+
+  const res = await fetch(`${API_URL}/api/services/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to upload service icon");
+  }
+  return res.json();
+}
+
+export async function exportServices(format: "json" | "csv"): Promise<Blob> {
+  const res = await fetch(`${API_URL}/api/services/export?format=${format}`);
+  if (!res.ok) {
+    throw new Error(`Failed to export services in ${format} format`);
+  }
+  return res.blob();
+}
+
+export async function importServices(fileContent: string, format: "json" | "csv"): Promise<{ success: boolean; count: number }> {
+  const res = await fetch(`${API_URL}/api/services/bulk-import`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ fileContent, format }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to import services");
+  }
+  return res.json();
+}
+

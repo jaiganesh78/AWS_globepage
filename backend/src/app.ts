@@ -8,6 +8,8 @@ import { regionsController } from "./controllers/regions.controller.js";
 import { categoriesController } from "./controllers/categories.controller.js";
 import { validateRegion } from "./validations/regions.validation.js";
 import { validateCategory } from "./validations/categories.validation.js";
+import { servicesController } from "./controllers/services.controller.js";
+import { validateService } from "./validations/services.validation.js";
 
 // Load environment variables
 dotenv.config();
@@ -22,6 +24,11 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+const serviceUploadDir = "uploads/services";
+if (!fs.existsSync(serviceUploadDir)) {
+  fs.mkdirSync(serviceUploadDir, { recursive: true });
+}
+
 // Multer configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -34,8 +41,34 @@ const storage = multer.diskStorage({
   },
 });
 
+const serviceStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, serviceUploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, `${uniqueSuffix}${ext}`);
+  },
+});
+
 const upload = multer({
   storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ["image/svg+xml", "image/png", "image/jpeg", "image/webp"];
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only SVG, PNG, JPG, JPEG, and WEBP image files are allowed."));
+    }
+  },
+});
+
+const serviceUpload = multer({
+  storage: serviceStorage,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
@@ -106,6 +139,36 @@ app.get("/api/regions/:id", regionsController.getById);
 app.post("/api/regions", validateRegion, regionsController.create);
 app.put("/api/regions/:id", validateRegion, regionsController.update);
 app.delete("/api/regions/:id", regionsController.delete);
+
+// 5. AWS Services routes
+app.get("/api/services/categories", servicesController.getCategories);
+app.get("/api/services/export", servicesController.exportData);
+app.post("/api/services/bulk-import", servicesController.bulkImport);
+app.post("/api/services/upload", (req, res) => {
+  serviceUpload.single("icon")(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: err.message || "Failed to upload file",
+      });
+    }
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      url: `/uploads/services/${req.file.filename}`,
+    });
+  });
+});
+app.get("/api/services", servicesController.getAll);
+app.get("/api/services/:id", servicesController.getById);
+app.post("/api/services", validateService, servicesController.create);
+app.put("/api/services/:id", validateService, servicesController.update);
+app.delete("/api/services/:id", servicesController.delete);
 
 // 4. Global Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
