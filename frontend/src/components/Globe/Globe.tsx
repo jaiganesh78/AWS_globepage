@@ -39,11 +39,11 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
   const getTargetRotation = (lat: number, lng: number) => {
     const [x, y, z] = latLngToXYZ(lat, lng, 1.0);
 
-    // Solve YXZ rotation sequence Ry(ry) * Rx(rx) * P = [0, 0, 1]
-    // Step 1: rotate around X to bring y' to 0: rx = atan2(y, z)
-    // Step 2: rotate around Y to bring x'' to 0: ry = atan2(-x, sqrt(y²+z²))
-    const rx = Math.atan2(y, z);
-    const ry = Math.atan2(-x, Math.sqrt(y * y + z * z));
+    // Solve XYZ rotation sequence Rx(rx) * Ry(ry) * P = [0, 0, 1]
+    // Step 1: Rotate around Y to bring x to 0: ry = Math.atan2(-x, z)
+    // Step 2: Rotate around X to bring y to 0: rx = Math.atan2(y, Math.sqrt(x * x + z * z))
+    const ry = Math.atan2(-x, z);
+    const rx = Math.atan2(y, Math.sqrt(x * x + z * z));
 
     // Shift focus slightly left to avoid info panel overlap
     const ryOffset = -0.35;
@@ -145,7 +145,11 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
   });
 
   return (
-    <group ref={globeGroupRef} scale={1.5} rotation={new THREE.Euler(0, -1.3962634, 0, 'YXZ')}>
+    <group 
+      ref={globeGroupRef} 
+      scale={1.5} 
+      rotation={new THREE.Euler(0, -1.3962634, 0, 'XYZ')}
+    >
       {/* Ocean Base Sphere — renders first */}
       <Sphere args={[0.995, 64, 64]} renderOrder={0}>
         <meshBasicMaterial
@@ -154,9 +158,13 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
         />
       </Sphere>
 
-      {/* Landmass Sphere (alpha-map, gray continents) — renders second */}
+      {/* Landmass Sphere — renders second */}
       {texture && (
-        <Sphere args={[1.0, 64, 64]} renderOrder={1}>
+        <Sphere 
+          args={[1.0, 64, 64]} 
+          renderOrder={1} 
+          rotation={[0, 0, 0]}
+        >
           <meshBasicMaterial
             alphaMap={texture}
             color="#7B7B7B"
@@ -168,7 +176,7 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
         </Sphere>
       )}
 
-      {/* Atmospheric Soft Glow (faint outer ring) — renders third */}
+      {/* Atmospheric Soft Glow (faint outer ring) */}
       <Sphere args={[1.015, 64, 64]} renderOrder={2}>
         <meshBasicMaterial
           color="#BEE3ED"
