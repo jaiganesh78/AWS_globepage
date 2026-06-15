@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Texture Measurement Tool</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1a1c1e; color: #e5e7eb; }
+    canvas { border: 2px solid #374151; cursor: crosshair; max-width: 100%; height: auto; }
+    .info { margin: 10px 0; padding: 10px; background: #1f2937; border-radius: 4px; }
+    .measurement { color: #00e5ff; font-weight: bold; }
+    .instruction { color: #ff9900; margin-bottom: 20px; }
+    button { background: #0073bb; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #00a3ff; }
+    input[type="radio"] { margin-right: 8px; margin-left: 16px; }
+    label { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>World Map Texture Measurement</h1>
+  <p class="instruction">Click on the Prime Meridian (0° longitude line / Greenwich) and Equator to measure their pixel positions.</p>
+  
+  <div>
+    <label><input type="radio" name="mode" value="meridian" checked> Prime Meridian (0° Longitude)</label>
+    <label><input type="radio" name="mode" value="equator"> Equator (0° Latitude)</label>
+  </div>
+  
+  <canvas id="canvas"></canvas>
+  
+  <div class="info">
+    <div>Image Dimensions: <span id="dims" class="measurement">Loading...</span></div>
+    <div>Prime Meridian X: <span id="meridianX" class="measurement">Not measured</span> px (<span id="meridianU" class="measurement">--</span>)</div>
+    <div>Equator Y: <span id="equatorY" class="measurement">Not measured</span> px (<span id="equatorV" class="measurement">--</span>)</div>
+    <div>Longitude Offset: <span id="lonOffset" class="measurement">--</span>°</div>
+    <div>Latitude Offset: <span id="latOffset" class="measurement">--</span>°</div>
+    <div>Recommended texture.offset.x: <span id="recOffsetX" class="measurement">--</span></div>
+    <div>Recommended texture.offset.y: <span id="recOffsetY" class="measurement">--</span></div>
+  </div>
+  
+  <button onclick="resetMeasurements()">Reset Measurements</button>
+  <button onclick="copyResults()">Copy Results</button>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    let meridianX = null;
+    let equatorY = null;
+    let mode = 'meridian';
+    
+    document.querySelectorAll('input[name="mode"]').forEach(r => {
+      r.addEventListener('change', e => mode = e.target.value);
+    });
+    
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      document.getElementById('dims').textContent = `${img.width} × ${img.height}`;
+    };
+    
+    img.src = '/textures/world-map.png';
+    
+    canvas.addEventListener('click', e => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = img.width / rect.width;
+      const scaleY = img.height / rect.height;
+      const x = Math.round((e.clientX - rect.left) * scaleX);
+      const y = Math.round((e.clientY - rect.top) * scaleY);
+      
+      if (mode === 'meridian') {
+        meridianX = x;
+        updateDisplay();
+      } else {
+        equatorY = y;
+        updateDisplay();
+      }
+      
+      // Draw marker
+      ctx.strokeStyle = mode === 'meridian' ? '#00e5ff' : '#ff9900';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      if (mode === 'meridian') {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, img.height);
+      } else {
+        ctx.moveTo(0, y);
+        ctx.lineTo(img.width, y);
+      }
+      ctx.stroke();
+      
+      // Redraw image with markers
+      ctx.drawImage(img, 0, 0);
+      if (meridianX !== null) {
+        ctx.strokeStyle = '#00e5ff';
+        ctx.beginPath();
+        ctx.moveTo(meridianX, 0);
+        ctx.lineTo(meridianX, img.height);
+        ctx.stroke();
+      }
+      if (equatorY !== null) {
+        ctx.strokeStyle = '#ff9900';
+        ctx.beginPath();
+        ctx.moveTo(0, equatorY);
+        ctx.lineTo(img.width, equatorY);
+        ctx.stroke();
+      }
+    });
+    
+    function updateDisplay() {
+      if (meridianX !== null) {
+        const u = meridianX / img.width;
+        const offsetDeg = (u - 0.5) * 360;
+        document.getElementById('meridianX').textContent = meridianX;
+        document.getElementById('meridianU').textContent = u.toFixed(4);
+        document.getElementById('lonOffset').textContent = offsetDeg.toFixed(2);
+        document.getElementById('recOffsetX').textContent = (-(u - 0.5)).toFixed(4);
+      }
+      if (equatorY !== null) {
+        const v = equatorY / img.height;
+        const offsetDeg = (0.5 - v) * 180; // v=0 at top, so invert
+        document.getElementById('equatorY').textContent = equatorY;
+        document.getElementById('equatorV').textContent = v.toFixed(4);
+        document.getElementById('latOffset').textContent = offsetDeg.toFixed(2);
+        document.getElementById('recOffsetY').textContent = (-(0.5 - v)).toFixed(4);
+      }
+    }
+    
+    function resetMeasurements() {
+      meridianX = null;
+      equatorY = null;
+      ctx.drawImage(img, 0, 0);
+      document.getElementById('meridianX').textContent = 'Not measured';
+      document.getElementById('meridianU').textContent = '--';
+      document.getElementById('equatorY').textContent = 'Not measured';
+      document.getElementById('equatorV').textContent = '--';
+      document.getElementById('lonOffset').textContent = '--';
+      document.getElementById('latOffset').textContent = '--';
+      document.getElementById('recOffsetX').textContent = '--';
+      document.getElementById('recOffsetY').textContent = '--';
+    }
+    
+    function copyResults() {
+      const results = `Texture Measurement Report
+========================
+Image Dimensions: ${img.width} × ${img.height}
+Prime Meridian X: ${meridianX} px (u = ${meridianX ? (meridianX/img.width).toFixed(4) : 'N/A'})
+Equator Y: ${equatorY} px (v = ${equatorY ? (equatorY/img.height).toFixed(4) : 'N/A'})
+Longitude Offset: ${meridianX ? ((meridianX/img.width - 0.5) * 360).toFixed(2) : 'N/A'}°
+Latitude Offset: ${equatorY ? ((0.5 - equatorY/img.height) * 180).toFixed(2) : 'N/A'}°
+Recommended texture.offset.x: ${meridianX ? (-(meridianX/img.width - 0.5)).toFixed(4) : 'N/A'}
+Recommended texture.offset.y: ${equatorY ? (-(0.5 - equatorY/img.height)).toFixed(4) : 'N/A'}`;
+      navigator.clipboard.writeText(results);
+      alert('Results copied to clipboard!');
+    }
+  </script>
+</body>
+</html>
