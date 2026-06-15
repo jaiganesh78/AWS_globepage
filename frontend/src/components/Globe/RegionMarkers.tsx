@@ -15,7 +15,7 @@ interface RegionMarkersProps {
   selectedId?: string | null;
 }
 
-function DebugMarker({ label, position, color }: { label: string; position: [number, number, number]; color: string }) {
+function DebugMarker({ label, position, color, coords }: { label: string; position: [number, number, number]; color: string; coords?: string }) {
   return (
     <group>
       <mesh position={position}>
@@ -34,7 +34,7 @@ function DebugMarker({ label, position, color }: { label: string; position: [num
           whiteSpace: 'nowrap',
           zIndex: 9999
         }}>
-          {label}
+          {label}{coords ? ` (${coords})` : ''}
         </div>
       </Html>
     </group>
@@ -44,16 +44,37 @@ function DebugMarker({ label, position, color }: { label: string; position: [num
 export default function RegionMarkers({ regions, onSelect, selectedId }: RegionMarkersProps) {
   const hasSelection = !!selectedId;
   const r = 1.02;
+
+  // Geographic validation markers (all 8 test locations from the rewrite spec)
+  const validationPoints: { label: string; lat: number; lng: number; color: string }[] = [
+    { label: "Null Island", lat: 0, lng: 0, color: "#FF00FF" },
+    { label: "London", lat: 51.5074, lng: -0.1278, color: "#FF0066" },
+    { label: "Frankfurt", lat: 50.1109, lng: 8.6821, color: "#FF6600" },
+    { label: "Mumbai", lat: 19.076, lng: 72.8777, color: "#FFCC00" },
+    { label: "Singapore", lat: 1.3521, lng: 103.8198, color: "#00FF66" },
+    { label: "Tokyo", lat: 35.6762, lng: 139.6503, color: "#00CCFF" },
+    { label: "Sydney", lat: -33.8688, lng: 151.2093, color: "#0066FF" },
+    { label: "Virginia", lat: 38.8048, lng: -77.0469, color: "#CC00FF" },
+  ];
+
   return (
     <group>
-      {/* Visual Audit Debug Markers */}
-      <DebugMarker label="+X (Red)" position={[r, 0, 0]} color="#FF0000" />
-      <DebugMarker label="-X (Green)" position={[-r, 0, 0]} color="#00FF00" />
-      <DebugMarker label="+Z (Blue)" position={[0, 0, r]} color="#0088FF" />
-      <DebugMarker label="-Z (Yellow)" position={[0, 0, -r]} color="#FFFF00" />
+      {/* Axis Debug Markers */}
+      <DebugMarker label="+X" position={[r, 0, 0]} color="#FF0000" />
+      <DebugMarker label="-X" position={[-r, 0, 0]} color="#00FF00" />
+      <DebugMarker label="+Z" position={[0, 0, r]} color="#0088FF" />
+      <DebugMarker label="-Z" position={[0, 0, -r]} color="#FFFF00" />
 
-      {/* Null Island marker using the NEW coordinate formula */}
-      <DebugMarker label="Current Formula (0,0)" position={latLngToXYZ(0, 0, 1.02)} color="#FF00FF" />
+      {/* Geographic Validation Markers (all 8 test locations) */}
+      {validationPoints.map((vp) => (
+        <DebugMarker
+          key={vp.label}
+          label={vp.label}
+          position={latLngToXYZ(vp.lat, vp.lng, 1.02)}
+          color={vp.color}
+          coords={`${vp.lat.toFixed(4)},${vp.lng.toFixed(4)}`}
+        />
+      ))}
 
       {regions.map((item) => (
         <Dot

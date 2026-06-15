@@ -37,15 +37,16 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
   }, []);
 
   const getTargetRotation = (lat: number, lng: number) => {
-    // Generate the Cartesian coordinate using the shared utility at r = 1.0 (unit vector)
     const [x, y, z] = latLngToXYZ(lat, lng, 1.0);
 
-    // Solve YXZ rotation sequence (Ry * Rx) to map P_local to [0, 0, 1] while keeping the globe upright
-    const rx = Math.asin(y);
-    const ry = Math.atan2(-x, z);
+    // Solve YXZ rotation sequence Ry(ry) * Rx(rx) * P = [0, 0, 1]
+    // Step 1: rotate around X to bring y' to 0: rx = atan2(y, z)
+    // Step 2: rotate around Y to bring x'' to 0: ry = atan2(-x, sqrt(y²+z²))
+    const rx = Math.atan2(y, z);
+    const ry = Math.atan2(-x, Math.sqrt(y * y + z * z));
 
-    // Shift the focused marker slightly to the left (clear of the right info panel, but naturally centered)
-    const ryOffset = -0.35; 
+    // Shift focus slightly left to avoid info panel overlap
+    const ryOffset = -0.35;
 
     return { x: rx, y: ry + ryOffset };
   };
