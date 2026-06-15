@@ -19,7 +19,6 @@ let cachedTexture: THREE.Texture | null = null;
 export default function Globe({ regions, onSelectRegion, selectedRegion }: GlobeProps) {
   const [texture, setTexture] = useState<THREE.Texture | null>(cachedTexture);
   const globeGroupRef = useRef<THREE.Group>(null);
-  const lastLoggedRegionIdRef = useRef<string | null>(null);
   const loggedFinalRef = useRef<boolean>(false);
   const isLockedRef = useRef<boolean>(false);
   const prevSelectedRegionIdRef = useRef<string | null>(null);
@@ -42,9 +41,8 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
     const [x, y, z] = latLngToXYZ(lat, lng, 1.0);
 
     // Solve YXZ rotation sequence (Ry * Rx) to map P_local to [0, 0, 1] while keeping the globe upright
-    const signZ = z >= 0 ? 1 : -1;
-    const rx = Math.atan2(y * signZ, Math.abs(z));
-    const ry = Math.atan2(-x, signZ * Math.sqrt(y * y + z * z));
+    const rx = Math.asin(y);
+    const ry = Math.atan2(-x, z);
 
     // Shift the focused marker slightly to the left (clear of the right info panel, but naturally centered)
     const ryOffset = -0.35; 
@@ -192,4 +190,3 @@ export default function Globe({ regions, onSelectRegion, selectedRegion }: Globe
     </group>
   );
 }
-

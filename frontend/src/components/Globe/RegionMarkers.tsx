@@ -15,10 +15,46 @@ interface RegionMarkersProps {
   selectedId?: string | null;
 }
 
-export default function RegionMarkers({ regions, onSelect, selectedId }: RegionMarkersProps) {
-  const hasSelection = !!selectedId;
+function DebugMarker({ label, position, color }: { label: string; position: [number, number, number]; color: string }) {
   return (
     <group>
+      <mesh position={position}>
+        <sphereGeometry args={[0.04, 16, 16]} />
+        <meshBasicMaterial color={color} toneMapped={false} />
+      </mesh>
+      <Html position={position} center pointerEvents="none">
+        <div style={{
+          background: color,
+          color: '#000000',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontWeight: '900',
+          fontSize: '12px',
+          border: '1px solid black',
+          whiteSpace: 'nowrap',
+          zIndex: 9999
+        }}>
+          {label}
+        </div>
+      </Html>
+    </group>
+  );
+}
+
+export default function RegionMarkers({ regions, onSelect, selectedId }: RegionMarkersProps) {
+  const hasSelection = !!selectedId;
+  const r = 1.02;
+  return (
+    <group>
+      {/* Visual Audit Debug Markers */}
+      <DebugMarker label="+X (Red)" position={[r, 0, 0]} color="#FF0000" />
+      <DebugMarker label="-X (Green)" position={[-r, 0, 0]} color="#00FF00" />
+      <DebugMarker label="+Z (Blue)" position={[0, 0, r]} color="#0088FF" />
+      <DebugMarker label="-Z (Yellow)" position={[0, 0, -r]} color="#FFFF00" />
+
+      {/* Null Island marker using the NEW coordinate formula */}
+      <DebugMarker label="Current Formula (0,0)" position={latLngToXYZ(0, 0, 1.02)} color="#FF00FF" />
+
       {regions.map((item) => (
         <Dot
           key={item.id}
