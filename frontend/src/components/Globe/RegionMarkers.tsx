@@ -51,21 +51,21 @@ function Dot({
   const selectedWireframeRef = useRef<THREE.Mesh>(null);
 
   // AWS Brand Orange Theme Colors
-  const coreColor = isSelected 
+  const coreColor = isSelected
     ? '#FFC766' // Selected
     : (hovered ? '#FFB84D' : '#FF9900'); // Hover / Idle
 
-  const haloColor = isSelected 
-    ? '#FFC766' 
+  const haloColor = isSelected
+    ? '#FFC766'
     : (hovered ? '#FFB84D' : '#FF9900');
 
   const opacity = isDimmed ? 0.35 : 1.0;
-  const coreRadius = isSelected 
-    ? 0.024 
+  const coreRadius = isSelected
+    ? 0.024
     : (hovered ? 0.020 : 0.016);
 
-  const haloOpacity = isDimmed 
-    ? 0.1 
+  const haloOpacity = isDimmed
+    ? 0.1
     : (isSelected ? 0.35 : (hovered ? 0.3 : 0.15));
 
   // Single animation loop for performance: slow, low-frequency breathing glow
@@ -120,10 +120,10 @@ function Dot({
       </mesh>
 
       {/* Soft Breathing 3D Glow Halo */}
-      <mesh 
+      <mesh
         ref={haloRef}
-        position={position} 
-        raycast={() => null as any} 
+        position={position}
+        raycast={() => null as any}
         renderOrder={2}
       >
         <sphereGeometry args={[coreRadius * 2.5, 16, 16]} />
@@ -138,10 +138,10 @@ function Dot({
 
       {/* Selected holographic wireframe orb */}
       {isSelected && (
-        <mesh 
+        <mesh
           ref={selectedWireframeRef}
-          position={position} 
-          raycast={() => null as any} 
+          position={position}
+          raycast={() => null as any}
           renderOrder={1}
         >
           <sphereGeometry args={[0.045, 12, 12]} />
