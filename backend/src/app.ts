@@ -1,3 +1,7 @@
+/**
+ * AWS Region Intelligence Platform - Express API Server
+ * Handles CORS, region/category/service routing, and file uploads.
+ */
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";

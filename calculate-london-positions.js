@@ -1,3 +1,6 @@
+/**
+ * Spherical-to-Cartesian coordinate calculation and rotation alignment utility.
+ */
 const latLngToXYZ = (lat, lng, r = 1.02) => {
   const phi = (90 - lat) * (Math.PI / 180);
   const theta = lng * (Math.PI / 180);

@@ -1,3 +1,6 @@
+/**
+ * Texture Analysis Utility - Inspects pixel dimensions, color channels, and equator alignment.
+ */
 const fs = require('fs');
 const PNG = require('pngjs').PNG;
 

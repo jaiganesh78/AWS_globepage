@@ -1,4 +1,7 @@
 {
+  "name": "aws-globe-root",
+  "version": "1.0.0",
+  "description": "AWS Region Intelligence Platform - 3D Globe & Infrastructure Explorer",
   "dependencies": {
     "pngjs": "^7.0.0"
   }

@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * AWS Region Intelligence Platform - Main Interactive Dashboard
+ * Connects 3D Globe visualization, continent filters, and dynamic service catalog.
+ */
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {

@@ -1,4 +1,5 @@
 // Geographic Validation Calculation Script
+// Validates spherical latitude/longitude to 3D Cartesian coordinates for AWS datacenters.
 // Run this in browser console to get expected XYZ for all 8 points
 
 const latLngToXYZ = (lat, lng, r = 1.02) => {
